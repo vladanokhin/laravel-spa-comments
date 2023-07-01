@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  workspace:
+    container_name: ${PROJECT_NAME}-workspace
+    build:
+        context: ../
+        dockerfile: ./docker/workspace/Dockerfile
+        args:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - APP_ENV=${APP_ENV}
+    environment:
+      PHP_IDE_CONFIG: "serverName=Docker"
+    volumes:
+      - ../:/var/www/
+
+  postgres:
+    container_name: ${PROJECT_NAME}-postgres
+    image: postgres:alpine
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgres/data:rw
+
+  nginx:
+    container_name: ${PROJECT_NAME}-nginx
+    build:
+      context: ./nginx
+    ports:
+      - ${NGINX_PORT}:80
+    volumes:
+      - ..:/var/www:rw
+    depends_on:
+      - workspace
+
+volumes:
+  db_data:
