@@ -4,8 +4,8 @@ module.exports = {
     resolve: {
         alias: {
             '@js': path.resolve('./resources/js'),
-            '@src': path.resolve('./resources/js/src'),
             '@scss': path.resolve('./resources/scss'),
+            '@src': path.resolve('./resources/js/src'),
             '@fonts': path.resolve('./resources/fonts'),
             '@images': path.resolve('./resources/images'),
         },
