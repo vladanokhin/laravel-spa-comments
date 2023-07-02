@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+/**
+ * @property integer $id
+ * @property string $name
+ * @property string $email
+ * @property string $url
+ * @property  Comment[] $comments
+ * @property \Carbon $created_at
+ * @property \Carbon $updated_at
+ * @mixin \Eloquent
+ */
+class User extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -20,5 +27,10 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'url'
     ];
+
+    public function comments() {
+        return $this->hasMany(Comment::class);
+    }
 }
