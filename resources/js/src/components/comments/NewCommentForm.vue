@@ -50,7 +50,22 @@
             </div>
         </div>
         <div class="mb-3">
-            <h6>Captcha</h6>
+            <VueClientRecaptcha
+                :chars="captchaChars"
+                :value="captcha"
+                @isValid="setIsValidCaptcha"
+                @getCode="newCaptchaCode"
+                class="mb-3"
+            />
+            <input
+                v-model="captcha"
+                type="text"
+                class="form-control"
+                :class="{'is-invalid': !isValidCaptcha && checkedCaptcha}"
+                id="captcha">
+            <div class="invalid-feedback">
+                Invalid captcha
+            </div>
         </div>
         <div class="mb-3">
             <button @click="addComment" class="btn btn-outline-primary">Add a comment</button>
@@ -61,12 +76,14 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, url, minLength, maxLength, alphaNum } from '@vuelidate/validators'
+import captcha from "@src/mixins/captcha";
 
 export default {
     name: "NewCommentForm",
-    setup () {
+    setup() {
         return { v$: useVuelidate() }
     },
+    mixins: [captcha],
     data() {
         return {
             name: null,
@@ -94,8 +111,9 @@ export default {
     },
     methods: {
         addComment() {
+            this.checkedCaptcha = true;
             this.v$.$validate()
-            if (!this.v$.$error)
+            if (!this.v$.$error && this.isValidCaptcha)
                 axios.post('api/comments/new', {name: this.name, email: this.email, url: this.url, message: this.message})
         }
     }
@@ -103,5 +121,10 @@ export default {
 </script>
 
 <style scoped>
+@import url("/node_modules/vue-client-recaptcha/dist/style.css");
+
+.vue_client_recaptcha {
+    justify-content: start;
+}
 
 </style>
