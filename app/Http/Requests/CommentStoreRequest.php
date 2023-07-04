@@ -24,7 +24,7 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|min:3|max:30|regex: /^[a-zA-Z0-9\s]+$/',
+            'name' => 'required|string|min:3|max:30|alpha_num:ascii',
             'email' => 'required|email',
             'url' => 'url|nullable',
             'message' => 'required|string|min:3|max:250'
