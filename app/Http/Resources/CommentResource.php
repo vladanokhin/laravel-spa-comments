@@ -17,10 +17,7 @@ class CommentResource extends JsonResource
         return [
             'id' => $this->id,
             'message' => $this->message,
-            'user' => $this->when(
-                !$request->routeIs('comments.create'),
-                new UserResource($this->user)
-            ),
+            'user' => UserResource::make($this->user)
         ];
     }
 }

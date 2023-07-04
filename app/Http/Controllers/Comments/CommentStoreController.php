@@ -23,6 +23,6 @@ class CommentStoreController extends Controller
             'message' => $request->get('message'),
         ]);
 
-        return new CommentResource($comment);
+        return CommentResource::make($comment);
     }
 }
