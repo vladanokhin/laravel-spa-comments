@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property integer $id
@@ -36,5 +37,15 @@ class Comment extends Model
     public function parent()
     {
         return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    /**
+     * Comments without parents, i.e. basic comments
+     * @param Builder $query
+     * @return void
+     */
+    public function scopeBase(Builder $query)
+    {
+        $query->whereNull('parent_id');
     }
 }

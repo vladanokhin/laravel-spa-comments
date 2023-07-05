@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CommentResource extends JsonResource
@@ -17,7 +18,11 @@ class CommentResource extends JsonResource
         return [
             'id' => $this->id,
             'message' => $this->message,
-            'user' => UserResource::make($this->user)
+            'children' => $this->when(
+                !$request->routeIs('comments.create'),
+                self::collection($this->children)
+            ),
+            'user' => UserResource::make($this->user),
         ];
     }
 }

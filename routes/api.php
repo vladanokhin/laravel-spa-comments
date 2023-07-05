@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Comments\CommentListController;
 use App\Http\Controllers\Comments\CommentStoreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,4 +12,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'comments'], function () {
     Route::post('/new', CommentStoreController::class)->name('comments.create');
+    Route::get('/', CommentListController::class)->name('comments.list');
 });
