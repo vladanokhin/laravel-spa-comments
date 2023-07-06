@@ -74,15 +74,14 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, url, minLength, maxLength, alphaNum } from '@vuelidate/validators'
+import { ref } from "vue";
 import captcha from "@src/mixins/captcha";
+import { useVuelidate } from '@vuelidate/core'
+import { useCommentsStore } from "@src/store/comments";
+import commentFormRules from "@src/validators/commentFormRules";
 
 export default {
     name: "NewCommentForm",
-    setup() {
-        return { v$: useVuelidate() }
-    },
     mixins: [captcha],
     data() {
         return {
@@ -93,28 +92,29 @@ export default {
         }
     },
     validations() {
+        return commentFormRules
+    },
+    setup() {
+        const serverMessageErrors = ref({})
+
         return {
-            name: {
-                required,
-                minLength: minLength(3),
-                maxLength: maxLength(30),
-                alphaNum,
-            },
-            email: { required, email },
-            url: { url },
-            message: {
-                required,
-                minLength: minLength(3),
-                maxLength: maxLength(250),
-            },
+            serverMessageErrors,
+            v$: useVuelidate({ $externalResults: serverMessageErrors }),
+            commentStore: useCommentsStore(),
         }
     },
     methods: {
         addComment() {
             this.checkedCaptcha = true;
             this.v$.$validate()
-            if (!this.v$.$error && this.isValidCaptcha)
-                axios.post('api/comments/new', {name: this.name, email: this.email, url: this.url, message: this.message})
+            if (this.v$.$error && !this.isValidCaptcha)
+                return;
+
+            this.commentStore.addComment({name: this.name, email: this.email, url: this.url, message: this.message})
+                .catch((error) => {
+                    // Show errors message from server
+                    Object.assign(this.serverMessageErrors, error.response.data.errors)
+                })
         }
     }
 }
