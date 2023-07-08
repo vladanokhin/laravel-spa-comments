@@ -23,6 +23,7 @@ class CommentResource extends JsonResource
                 self::collection($this->children)
             ),
             'user' => UserResource::make($this->user),
+            'date' => $this->created_at,
         ];
     }
 }

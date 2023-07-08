@@ -3,8 +3,8 @@
     <div class="container">
         <div class="row d-flex justify-content-between">
             <div class="col-8 col-sm-5 col-md-8">
-                <div class="bg-light shadow rounded-3 p-3">
-                    Comments list!
+                <div class="bg-light shadow rounded-3 p-3 mb-3">
+                    <CommentsList/>
                 </div>
             </div>
             <div class="col-4 col-sm-7 col-md-4">
@@ -17,12 +17,14 @@
 <script>
 import Header from '@src/components/comments/Header'
 import NewCommentForm from '@src/components/comments/NewCommentForm'
+import CommentsList from "@src/components/comments/CommentsList";
 
 export default {
     name: "Comments",
     components: {
         Header,
         NewCommentForm,
+        CommentsList
     }
 }
 </script>
