@@ -18,8 +18,12 @@ export const useCommentsStore = defineStore('comments', {
             return axios.post('api/comments/new', data)
         },
 
+        /**
+         * Get list of comments and authors
+         * @return {Promise<axios.AxiosResponse<any>>}
+         */
         loadListComments() {
-            axios.get('api/comments')
+            return axios.get('api/comments')
                 .then((res) => {
                     this.listComments = res['data'];
                 })

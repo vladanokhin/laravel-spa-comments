@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-body-secondary vh-100">
+    <div class="bg-body-secondary h-100">
         <RouterView/>
     </div>
 </template>
