@@ -20,10 +20,12 @@ export const useCommentsStore = defineStore('comments', {
 
         /**
          * Get list of comments and authors
+         * @param {number} page number of page.
          * @return {Promise<axios.AxiosResponse<any>>}
          */
-        loadListComments() {
-            return axios.get('api/comments')
+        loadListComments(page = null) {
+            const url = page === null ? 'api/comments' : `api/comments?page=${page}`
+            return axios.get(url)
                 .then((res) => {
                     this.listComments = res['data'];
                 })

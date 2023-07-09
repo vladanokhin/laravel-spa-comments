@@ -26,22 +26,32 @@
         </div>
         <div class="row comment-text m-2">
             <div class="col-12">
-                {{ comment.message }}
+                {{ comment.message }}!
             </div>
         </div>
         <div class="child" v-if="comment.children && comment.children.length">
-            <CommentsList :comments="comment.children" />
+            <CommentsList :comments="comment.children" :is-child="true"/>
         </div>
     </div>
+    <Bootstrap5Pagination
+        v-if="!isChild"
+        class="d-flex justify-content-center mt-3"
+        :data="commentStore.listComments"
+        @pagination-change-page="commentStore.loadListComments"
+    />
 </template>
 
 <script>
-import { useCommentsStore } from "@src/store/comments";
 import moment from "moment";
+import { useCommentsStore } from "@src/store/comments";
+import { Bootstrap5Pagination } from "laravel-vue-pagination";
 
 export default {
     name: "CommentsList",
-    props: { 'comments': Object },
+    props: {
+        'comments': Object,
+        'isChild': false,
+    },
     setup() {
       return {
           commentStore: useCommentsStore(),
@@ -61,7 +71,10 @@ export default {
     methods: {
         formatDate(_date) {
             return moment(_date, ).format('YY-MM-DD в HH:mm')
-        }
+        },
+    },
+    components: {
+        Bootstrap5Pagination,
     }
 }
 </script>
