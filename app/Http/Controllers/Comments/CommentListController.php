@@ -17,6 +17,10 @@ class CommentListController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return CommentResource::collection(Comment::base()->paginate(25));
+        return CommentResource::collection(
+            Comment::base()
+                ->orderByDesc('created_at')
+                ->paginate(25)
+        );
     }
 }

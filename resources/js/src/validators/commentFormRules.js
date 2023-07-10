@@ -11,7 +11,7 @@ const commentFormRules = {
         required,
         email
     },
-    url: { required },
+    url: { url },
     message: {
         required,
         minLength: minLength(3),
