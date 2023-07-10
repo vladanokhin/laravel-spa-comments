@@ -68,13 +68,13 @@
             </div>
         </div>
         <div class="mb-3">
-            <button @click="createEmit" class="btn btn-outline-primary">Add a comment</button>
+            <button @click="createEmitNewComment" class="btn btn-outline-primary">Add a comment</button>
         </div>
     </div>
 </template>
 
 <script>
-import {getCurrentInstance, ref} from "vue";
+import { ref } from "vue";
 import captcha from "@src/mixins/captcha";
 import { useVuelidate } from '@vuelidate/core'
 import { useCommentsStore } from "@src/store/comments";
@@ -104,7 +104,7 @@ export default {
         }
     },
     methods: {
-        createEmit() {
+        createEmitNewComment() {
             this.checkedCaptcha = true;
             this.v$.$validate()
             if (this.v$.$error || !this.isValidCaptcha)
