@@ -27,7 +27,8 @@ class CommentStoreRequest extends FormRequest
             'name' => 'required|string|min:3|max:30|alpha_num:ascii',
             'email' => 'required|email',
             'url' => 'url|nullable',
-            'message' => 'required|string|min:3|max:250'
+            'message' => 'required|string|min:3|max:250',
+            'reply' => 'nullable|integer',
         ];
     }
 }

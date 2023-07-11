@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const useCommentsStore = defineStore('comments', {
     state: () => ({
         listComments: {},
+        replyToComment: {},
     }),
     getters: {
         // TODO: getters for filtering list comments

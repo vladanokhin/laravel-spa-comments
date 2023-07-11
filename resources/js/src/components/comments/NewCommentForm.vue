@@ -1,5 +1,6 @@
 <template>
     <div class="new-comment-form bg-light shadow rounded-3 p-3">
+        <ReplyBlock/>
         <div class="mb-3">
             <label for="username" class="form-label">User name</label>
             <input
@@ -79,6 +80,7 @@ import captcha from "@src/mixins/captcha";
 import { useVuelidate } from '@vuelidate/core'
 import { useCommentsStore } from "@src/store/comments";
 import commentFormRules from "@src/validators/commentFormRules";
+import ReplyBlock from "@src/components/comments/ReplyBlock";
 
 export default {
     name: "NewCommentForm",
@@ -110,11 +112,22 @@ export default {
             if (this.v$.$error || !this.isValidCaptcha)
                 return;
 
-            this.$emit('create-new-comment', {name: this.name, email: this.email, url: this.url, message: this.message})
+            this.$emit('create-new-comment',
+                {
+                    name: this.name,
+                    email: this.email,
+                    url: this.url,
+                    message: this.message,
+                    reply: this.commentStore.replyToComment.id ?? null
+                }
+            )
         },
         addServerMessageErrors(errors) {
             Object.assign(this.serverMessageErrors, errors)
         }
+    },
+    components: {
+        ReplyBlock,
     }
 }
 </script>

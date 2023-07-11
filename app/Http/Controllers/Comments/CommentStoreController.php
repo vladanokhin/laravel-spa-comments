@@ -18,10 +18,14 @@ class CommentStoreController extends Controller
      */
     public function __invoke(CommentStoreRequest $request)
     {
-        $user = User::firstOrCreate($request->except('message'));
+        $user = User::firstOrCreate($request->except(['message', 'reply']));
         $comment = $user->comments()->create([
             'message' => $request->get('message'),
         ]);
+
+        $parentComment = Comment::find($request->get('reply'));
+        if($parentComment)
+            $parentComment->children()->save($comment);
 
         return CommentResource::make($comment);
     }
