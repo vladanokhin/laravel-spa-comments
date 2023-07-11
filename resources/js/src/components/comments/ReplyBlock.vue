@@ -5,13 +5,13 @@
                 <span class="ps-2">Reply to: </span>
                 <span class="fw-bold">{{ commentStore.replyToComment.user.name }}</span>
             </div>
-            <button
-                type="button"
-                class="btn-close reply-close-btn"
-                aria-label="Close"
+            <span
+                role="button"
+                class="fs-5 me-1"
                 @click="removeReplyComment"
             >
-            </button>
+                <i class="bi bi-x"></i>
+            </span>
         </div>
         <div class="d-flex border rounded-bottom p-2">
             <span class="text-truncate">{{ commentStore.replyToComment.message }}</span>
@@ -40,11 +40,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-.reply-close-btn {
-    width: 4px;
-    height: 4px;
-    margin-right: 4px;
-}
 
 </style>
