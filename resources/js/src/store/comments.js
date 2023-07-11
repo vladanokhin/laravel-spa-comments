@@ -6,9 +6,7 @@ export const useCommentsStore = defineStore('comments', {
         listComments: {},
         replyToComment: {},
     }),
-    getters: {
-        // TODO: getters for filtering list comments
-    },
+    getters: {},
     actions: {
         /**
          * Create new comment
@@ -30,6 +28,19 @@ export const useCommentsStore = defineStore('comments', {
                 .then((res) => {
                     this.listComments = res['data'];
                 })
-        }
+        },
+        filterByUserField(field, asc = true) {
+            const sorted = this.listComments['data']
+                                .sort((a, b) => a.user[field].localeCompare(b.user[field]))
+
+            this.listComments['data'] = asc ? sorted : sorted.reverse()
+        },
+
+        filterByDate(asc = true) {
+            const sorted = this.listComments['data'] = this.listComments['data']
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+            this.listComments['data'] = asc ? sorted : sorted.reverse()
+        },
     }
 })
