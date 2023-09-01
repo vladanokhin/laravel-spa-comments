@@ -16,6 +16,7 @@
         <div class="d-flex border rounded-bottom p-2">
             <span class="text-truncate">{{ commentStore.replyToComment.message }}</span>
         </div>
+        <input type="hidden" name="reply" :value="commentStore.replyToComment.id"/>
     </div>
 </template>
 

@@ -10,12 +10,14 @@
             <div class="col-4 col-sm-7 col-md-4">
                 <NewCommentForm
                     @create-new-comment="addComment"
+                    @upload-files="uploadFiles"
                     :key="lastComment.id"
                     ref="commentForm"
                 />
             </div>
         </div>
     </div>
+    <div id="js-modal"></div>
 </template>
 
 <script>
@@ -47,12 +49,15 @@ export default {
                     // Show errors message from server
                     this.$refs.commentForm.addServerMessageErrors(error.response.data.errors)
                 })
-        }
+        },
+        uploadFiles() {
+            console.log('Emit is working!')
+        },
     },
     components: {
         Header,
         NewCommentForm,
-        CommentsList
+        CommentsList,
     },
 }
 </script>

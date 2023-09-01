@@ -22,6 +22,7 @@ class CommentResource extends JsonResource
                 !$request->routeIs('comments.create'),
                 self::collection($this->children)
             ),
+            'files' => FileResource::collection($this->files),
             'user' => UserResource::make($this->user),
             'date' => $this->created_at,
         ];

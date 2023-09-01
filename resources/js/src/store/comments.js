@@ -10,11 +10,15 @@ export const useCommentsStore = defineStore('comments', {
     actions: {
         /**
          * Create new comment
-         * @param {Object} data
+         * @param {FormData} data
          * @return {Promise<axios.AxiosResponse<any>>}
          */
         addComment(data) {
-            return axios.post('api/comments/new', data)
+            return axios.post('api/comments/new', data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
         },
 
         /**

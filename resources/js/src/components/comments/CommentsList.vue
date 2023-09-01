@@ -26,6 +26,7 @@
                 <div class="col-12">
                     {{ comment.message }}
                 </div>
+                <CommentFiles :files="comment.files" v-if="comment.files.length"/>
             </div>
             <div class="child" v-if="comment.children && comment.children.length">
                 <CommentsList :comments="comment.children" :is-child="true"/>
@@ -46,6 +47,7 @@
 import moment from "moment";
 import { useCommentsStore } from "@src/store/comments";
 import { Bootstrap5Pagination } from "laravel-vue-pagination";
+import CommentFiles from "@src/components/comments/CommentFiles";
 
 export default {
     name: "CommentsList",
@@ -87,6 +89,7 @@ export default {
     },
     components: {
         Bootstrap5Pagination,
+        CommentFiles,
     }
 }
 </script>
