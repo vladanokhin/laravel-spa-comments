@@ -3,7 +3,6 @@
         <input
             type="file"
             multiple
-            name="files[]"
             id="user-file"
             class="hidden-input"
             @change="onUpload"
@@ -17,7 +16,7 @@
             @dragleave="dragleave"
             @drop="drop"
             v-if="files.length === 0"
-            >
+        >
             <label for="user-file" class="file-label">
                 <span v-if="isDragging">Release to drop files here.</span>
                 <span v-else>Drop files here or <u>click here</u> to upload.</span>
@@ -27,8 +26,12 @@
             v-else
             class="files"
         >
-            <div class="file-item" v-for="file in files" :key="file.name">
-                <span>{{ file.name }}</span>
+            <div
+                class="file-item"
+                v-for="file in files"
+                :key="file.name"
+            >
+                <span class="text-truncate me-1">{{ file.name }}</span>
                 <span
                     class="delete-file"
                     @click="deleteFile(files.indexOf(file))"
@@ -44,6 +47,7 @@
 
 export default {
     name: "DropFiles",
+    expose: ['files'],
     data() {
         return {
             isDragging: false,
@@ -69,7 +73,6 @@ export default {
         },
         deleteFile(index) {
             this.files.splice(index, 1)
-            this.$refs.upload.files.splice(index, 1)
         }
     }
 

@@ -79,8 +79,8 @@
                 </div>
             </div>
             <div class="mb-3">
-                <DropFiles ref="dropFiles"/>
-                <button @click="createEmitNewComment" class="btn btn-outline-primary mt-3">Add a comment</button>
+                <DropFiles ref="uploadFiles"/>
+                <button type="submit" class="btn btn-outline-primary mt-3">Add a comment</button>
             </div>
         </form>
     </div>
@@ -93,12 +93,12 @@ import { useVuelidate } from '@vuelidate/core'
 import { useCommentsStore } from "@src/store/comments";
 import commentFormRules from "@src/validators/commentFormRules";
 import ReplyBlock from "@src/components/comments/ReplyBlock";
-import DropFiles from "@src/components/shared/DropFiles.vue";
+import DropFiles from "@src/components/shared/DropFiles";
 
 export default {
     name: "NewCommentForm",
     mixins: [captcha],
-    emits: ['create-new-comment', 'upload-files'],
+    emits: ['create-new-comment'],
     data() {
         return {
             name: null,
@@ -121,12 +121,18 @@ export default {
     },
     methods: {
         createEmitNewComment(event) {
+            // Validation form
             this.checkedCaptcha = true;
             this.v$.$validate()
             if (this.v$.$error || !this.isValidCaptcha)
                 return;
 
+            // Creating data
             const formData = new FormData(event.currentTarget)
+            this.$refs.uploadFiles.files.forEach((file) => {
+                formData.append('files[]', file)
+            })
+
             this.$emit('create-new-comment', formData)
         },
         addServerMessageErrors(errors) {

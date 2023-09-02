@@ -24,11 +24,11 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|min:3|max:30|alpha_num:ascii|unique:users,name',
-            'email' => 'required|email|unique:users,email',
-            'url' => 'url|nullable',
+            'name'    => 'required|string|min:3|max:30|alpha_num:ascii|unique:users,name',
+            'email'   => 'required|email|unique:users,email',
+            'url'     => 'url|nullable',
             'message' => 'required|string|min:3|max:250',
-            'reply' => 'integer|nullable',
+            'reply'   => 'integer|nullable',
             'files.*' => 'file|max:100|mimes:txt'
         ];
     }
