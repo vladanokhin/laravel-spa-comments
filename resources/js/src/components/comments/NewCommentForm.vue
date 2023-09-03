@@ -5,7 +5,7 @@
             <div class="mb-3">
                 <label for="name" class="form-label">User name</label>
                 <input
-                    v-model="name"
+                    v-model="v$.name.$model"
                     type="text"
                     class="form-control"
                     :class="{'is-invalid': v$.name.$errors.length}"
@@ -19,7 +19,7 @@
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
                 <input
-                    v-model="email"
+                    v-model="v$.email.$model"
                     type="email"
                     class="form-control"
                     :class="{'is-invalid': v$.email.$errors.length}"
@@ -33,7 +33,7 @@
             <div class="mb-3">
                 <label for="homepage" class="form-label">Home page</label>
                 <input
-                    v-model="url"
+                    v-model="v$.url.$model"
                     type="url"
                     class="form-control"
                     :class="{'is-invalid': v$.url.$errors.length}"
@@ -47,7 +47,7 @@
             <div class="mb-3">
                 <label for="message" class="form-label">Message</label>
                 <textarea
-                    v-model="message"
+                    v-model="v$.message.$model"
                     class="form-control"
                     :class="{'is-invalid': v$.message.$errors.length}"
                     id="message"
@@ -121,22 +121,29 @@ export default {
     },
     methods: {
         createEmitNewComment(event) {
-            // Validation form
+            if(!this.validateForm())
+                return
+
+            this.$emit('create-new-comment', this.getFormData(event))
+        },
+        validateForm() {
             this.checkedCaptcha = true;
             this.v$.$validate()
-            if (this.v$.$error || !this.isValidCaptcha)
-                return;
+            this.$refs.uploadFiles.v$.$validate()
 
-            // Creating data
+            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error || !this.isValidCaptcha)
+        },
+        getFormData(event) {
             const formData = new FormData(event.currentTarget)
             this.$refs.uploadFiles.files.forEach((file) => {
                 formData.append('files[]', file)
             })
 
-            this.$emit('create-new-comment', formData)
+            return formData
         },
         addServerMessageErrors(errors) {
             Object.assign(this.serverMessageErrors, errors)
+            this.$refs.uploadFiles.addServerMessageErrors(errors)
         }
     },
     components: {

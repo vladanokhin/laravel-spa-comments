@@ -1,10 +1,14 @@
 <template>
-    <div class="dropzone-main">
+    <div
+        class="dropzone-main flex-column"
+        :class="{'is-invalid': v$.files.$errors.length}"
+    >
         <input
             type="file"
             multiple
             id="user-file"
             class="hidden-input"
+            :class="{'is-invalid': v$.files.$errors.length}"
             @change="onUpload"
             ref="upload"
             accept=".txt"
@@ -12,9 +16,9 @@
         <div
             class="dropzone-container"
             :class="{'dragging': isDragging}"
-            @dragover="dragover"
-            @dragleave="dragleave"
-            @drop="drop"
+            @dragover="dragOver"
+            @dragleave="dragLeave"
+            @drop="dropFile"
             v-if="files.length === 0"
         >
             <label for="user-file" class="file-label">
@@ -40,14 +44,30 @@
                 </span>
             </div>
         </div>
+        <div class="invalid-feedback mb-1" v-for="error in v$.files.$errors">
+            {{ error.$message }}
+        </div>
     </div>
 </template>
 
 <script>
 
+
+import commentFilesRules from "@src/validators/commentFilesRules";
+import {ref} from "vue";
+import {useVuelidate} from "@vuelidate/core";
+
 export default {
     name: "DropFiles",
-    expose: ['files'],
+    expose: ['files', 'addServerMessageErrors', 'v$'],
+    setup() {
+        const serverMessageErrors = ref({})
+
+        return {
+            serverMessageErrors,
+            v$: useVuelidate({ $externalResults: serverMessageErrors }),
+        }
+    },
     data() {
         return {
             isDragging: false,
@@ -58,24 +78,52 @@ export default {
         onUpload() {
             this.files.push(...this.$refs.upload.files);
         },
-        dragover(e) {
+        dragOver(e) {
             e.preventDefault();
             this.isDragging = true;
         },
-        dragleave() {
+        dragLeave() {
             this.isDragging = false;
         },
-        drop(e) {
+        dropFile(e) {
             e.preventDefault();
             this.$refs.upload.files = e.dataTransfer.files;
             this.onUpload();
             this.isDragging = false;
         },
         deleteFile(index) {
+            this.clearErrorServerMessages(index)
             this.files.splice(index, 1)
-        }
-    }
+        },
+        clearErrorServerMessages(index) {
+            if(this.files.left === 0)
+                this.serverMessageErrors = {}
+            else {
+                // Clear errors by file name
+                const fileName = this.files[index].name.toLowerCase()
+                this.serverMessageErrors['files'] = this.serverMessageErrors['files']
+                                                .filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
+            }
+        },
+        addServerMessageErrors(errors) {
+            // Get errors only for files
+            const errorsFile = Object.fromEntries(Object.entries(errors)
+                                        .filter(([key]) => key.includes('files.')))
+            // Get errors message
+            let errorsMessage = [];
+            for (const index in errorsFile) {
+                for(const error in errorsFile[index]) {
+                    errorsMessage.push(errorsFile[index][error]);
+                }
+            }
 
+            // Set errors
+            Object.assign(this.serverMessageErrors, {'files': errorsMessage})
+        },
+    },
+    validations() {
+        return commentFilesRules
+    },
 }
 </script>
 
@@ -86,6 +134,12 @@ export default {
     align-items: center;
     justify-content: center;
     text-align: center;
+
+    &.is-invalid {
+        .file-item {
+            background: rgb(255 0 0 / 20%);
+        }
+    }
 }
 
 .dropzone-container {
@@ -146,4 +200,10 @@ export default {
     display: block;
     cursor: pointer;
 }
+
+.invalid-feedback {
+    word-break: break-all;
+    text-align: left;
+}
+
 </style>

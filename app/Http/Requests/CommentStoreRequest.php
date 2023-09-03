@@ -16,6 +16,20 @@ class CommentStoreRequest extends FormRequest
         return true;
     }
 
+    public function attributes()
+    {
+        $attributes = [];
+
+        // Replacing attributes on a file name. Example, "file.0" to "some.txt"
+        if($this['files']) {
+            foreach($this['files'] as $key => $file) {
+                $attributes['files.' . $key] = ' file "'. $file->getClientOriginalName() . '"';
+            }
+        }
+
+        return $attributes;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,7 +43,8 @@ class CommentStoreRequest extends FormRequest
             'url'     => 'url|nullable',
             'message' => 'required|string|min:3|max:250',
             'reply'   => 'integer|nullable',
-            'files.*' => 'file|max:100|mimes:txt'
+            'files'   => 'max:5',
+            'files.*' => 'file|max:100|mimes:txt',
         ];
     }
 }
