@@ -1,3 +1,23 @@
+<script>
+import {defineComponent} from 'vue'
+import {useCommentsStore} from "@src/store/comments";
+
+export default defineComponent({
+    name: "ReplyBlock",
+    setup() {
+        return {
+            commentStore: useCommentsStore(),
+        }
+    },
+    methods: {
+        removeReplyComment() {
+            this.commentStore.replyToComment = {}
+        }
+    }
+
+})
+</script>
+
 <template>
     <div class="mb-3" v-if="commentStore.replyToComment.id">
         <div class="d-flex align-items-center border rounded-top">
@@ -19,26 +39,6 @@
         <input type="hidden" name="reply" :value="commentStore.replyToComment.id"/>
     </div>
 </template>
-
-<script>
-import { defineComponent } from 'vue'
-import { useCommentsStore } from "@src/store/comments";
-
-export default defineComponent({
-    name: "ReplyBlock",
-    setup() {
-        return {
-            commentStore: useCommentsStore(),
-        }
-    },
-    methods: {
-        removeReplyComment() {
-            this.commentStore.replyToComment = {}
-        }
-    }
-
-})
-</script>
 
 <style scoped>
 

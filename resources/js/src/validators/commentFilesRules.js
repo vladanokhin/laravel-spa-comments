@@ -1,4 +1,4 @@
-import { maxLength, helpers } from "@vuelidate/validators";
+import {maxLength, helpers} from "@vuelidate/validators";
 import {fileSize, mimes} from "@src/validators/customRules"
 
 

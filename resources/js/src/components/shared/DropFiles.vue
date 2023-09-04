@@ -1,3 +1,86 @@
+<script>
+import {defineComponent} from 'vue'
+import commentFilesRules from "@src/validators/commentFilesRules";
+import {ref} from "vue";
+import {useVuelidate} from "@vuelidate/core";
+import tooltip from "@src/mixins/tooltip";
+import {isEmpty} from "lodash";
+
+export default defineComponent({
+    name: "DropFiles",
+    expose: ['files', 'addServerMessageErrors', 'v$'],
+    mixins: [tooltip],
+    setup() {
+        const serverMessageErrors = ref({})
+
+        return {
+            serverMessageErrors,
+            v$: useVuelidate({ $externalResults: serverMessageErrors }),
+        }
+    },
+    data() {
+        return {
+            isDragging: false,
+            files: [],
+        }
+    },
+    methods: {
+        onUpload() {
+            this.files.push(...this.$refs.upload.files);
+        },
+        dragOver(e) {
+            e.preventDefault();
+            this.isDragging = true;
+        },
+        dragLeave() {
+            this.isDragging = false;
+        },
+        dropFile(e) {
+            e.preventDefault();
+            this.$refs.upload.files = e.dataTransfer.files;
+            this.onUpload();
+            this.isDragging = false;
+        },
+        deleteFile(index) {
+            this.clearErrorServerMessages(index)
+            this.files.splice(index, 1)
+        },
+        clearErrorServerMessages(index) {
+            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
+                return
+
+            if(this.files.left === 0) {
+                this.serverMessageErrors = {}
+                return
+            }
+
+            // Clear errors by file name
+            const fileName = this.files[index].name.toLowerCase()
+            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
+                                                ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
+        },
+        addServerMessageErrors(errors) {
+            // Get errors only for files
+            const errorsFile = Object.fromEntries(Object.entries(errors)
+                                        .filter(([key]) => key.includes('files.')))
+            // Get errors message
+            let errorsMessage = [];
+            for (const index in errorsFile) {
+                for(const error in errorsFile[index]) {
+                    errorsMessage.push(errorsFile[index][error]);
+                }
+            }
+
+            // Set errors
+            Object.assign(this.serverMessageErrors, {'files': errorsMessage})
+        },
+    },
+    validations() {
+        return commentFilesRules
+    },
+})
+</script>
+
 <template>
     <div
         class="dropzone-main flex-column"
@@ -55,90 +138,6 @@
         </div>
     </div>
 </template>
-
-<script>
-
-
-import commentFilesRules from "@src/validators/commentFilesRules";
-import {ref} from "vue";
-import {useVuelidate} from "@vuelidate/core";
-import tooltip from "@src/mixins/tooltip";
-import {isEmpty} from "lodash";
-
-export default {
-    name: "DropFiles",
-    expose: ['files', 'addServerMessageErrors', 'v$'],
-    mixins: [tooltip],
-    setup() {
-        const serverMessageErrors = ref({})
-
-        return {
-            serverMessageErrors,
-            v$: useVuelidate({ $externalResults: serverMessageErrors }),
-        }
-    },
-    data() {
-        return {
-            isDragging: false,
-            files: [],
-        }
-    },
-    methods: {
-        onUpload() {
-            this.files.push(...this.$refs.upload.files);
-        },
-        dragOver(e) {
-            e.preventDefault();
-            this.isDragging = true;
-        },
-        dragLeave() {
-            this.isDragging = false;
-        },
-        dropFile(e) {
-            e.preventDefault();
-            this.$refs.upload.files = e.dataTransfer.files;
-            this.onUpload();
-            this.isDragging = false;
-        },
-        deleteFile(index) {
-            this.clearErrorServerMessages(index)
-            this.files.splice(index, 1)
-        },
-        clearErrorServerMessages(index) {
-            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
-                return
-
-            if(this.files.left === 0) {
-                this.serverMessageErrors = {}
-                return
-            }
-
-            // Clear errors by file name
-            const fileName = this.files[index].name.toLowerCase()
-            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
-                                            ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
-        },
-        addServerMessageErrors(errors) {
-            // Get errors only for files
-            const errorsFile = Object.fromEntries(Object.entries(errors)
-                                        .filter(([key]) => key.includes('files.')))
-            // Get errors message
-            let errorsMessage = [];
-            for (const index in errorsFile) {
-                for(const error in errorsFile[index]) {
-                    errorsMessage.push(errorsFile[index][error]);
-                }
-            }
-
-            // Set errors
-            Object.assign(this.serverMessageErrors, {'files': errorsMessage})
-        },
-    },
-    validations() {
-        return commentFilesRules
-    },
-}
-</script>
 
 <style lang="scss" scoped>
 .dropzone-main {

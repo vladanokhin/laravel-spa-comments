@@ -1,3 +1,55 @@
+<script>
+import {defineComponent} from 'vue'
+import moment from "moment";
+import {useCommentsStore} from "@src/store/comments";
+import {Bootstrap5Pagination} from "laravel-vue-pagination";
+import CommentFiles from "@src/components/comments/CommentFiles";
+
+export default defineComponent({
+    name: "CommentsList",
+    props: {
+        'comments': Object,
+        'isChild': false,
+    },
+    setup() {
+        return {
+            commentStore: useCommentsStore(),
+        }
+    },
+    mounted() {
+        if(typeof this.comments === 'undefined')
+            this.commentStore.loadListComments();
+    },
+    computed: {
+        listComments() {
+            return typeof this.comments === 'undefined'
+                ? this.commentStore.listComments.data
+                : this.comments
+        },
+    },
+    methods: {
+        formatDate(_date) {
+            return moment(_date, ).format('YY-MM-DD в HH:mm')
+        },
+        setCommentToReply(comment) {
+            this.commentStore.replyToComment = comment
+        },
+        paginationChangePage(page) {
+            this.commentStore.loadListComments(page)
+                .then(() => {
+                    setTimeout(() => {
+                        window.scrollTo(0, 0);
+                    }, 250)
+                })
+        }
+    },
+    components: {
+        Bootstrap5Pagination,
+        CommentFiles,
+    }
+})
+</script>
+
 <template>
     <TransitionGroup name="comment-list">
         <div class="user-comment" v-for="comment in listComments" :key="comment.id">
@@ -42,57 +94,6 @@
         @pagination-change-page="paginationChangePage"
     />
 </template>
-
-<script>
-import moment from "moment";
-import { useCommentsStore } from "@src/store/comments";
-import { Bootstrap5Pagination } from "laravel-vue-pagination";
-import CommentFiles from "@src/components/comments/CommentFiles";
-
-export default {
-    name: "CommentsList",
-    props: {
-        'comments': Object,
-        'isChild': false,
-    },
-    setup() {
-      return {
-          commentStore: useCommentsStore(),
-      }
-    },
-    mounted() {
-        if(typeof this.comments === 'undefined')
-            this.commentStore.loadListComments();
-    },
-    computed: {
-        listComments() {
-            return typeof this.comments === 'undefined'
-                ? this.commentStore.listComments.data
-                : this.comments
-        },
-    },
-    methods: {
-        formatDate(_date) {
-            return moment(_date, ).format('YY-MM-DD в HH:mm')
-        },
-        setCommentToReply(comment) {
-          this.commentStore.replyToComment = comment
-        },
-        paginationChangePage(page) {
-            this.commentStore.loadListComments(page)
-                .then(() => {
-                    setTimeout(() => {
-                        window.scrollTo(0, 0);
-                    }, 250)
-                })
-        }
-    },
-    components: {
-        Bootstrap5Pagination,
-        CommentFiles,
-    }
-}
-</script>
 
 <style scoped>
 

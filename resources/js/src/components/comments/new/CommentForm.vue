@@ -1,3 +1,70 @@
+<script>
+import {ref, defineComponent} from "vue";
+import captcha from "@src/mixins/captcha";
+import {useVuelidate} from '@vuelidate/core'
+import {useCommentsStore}  from "@src/store/comments";
+import commentFormRules from "@src/validators/commentFormRules";
+import ReplyBlock from "@src/components/comments/new/ReplyBlock";
+import DropFiles from "@src/components/shared/DropFiles";
+
+export default defineComponent({
+    name: "CommentForm",
+    mixins: [captcha],
+    emits: ['create-new-comment'],
+    data() {
+        return {
+            name: null,
+            email: null,
+            url: null,
+            message: null,
+        }
+    },
+    validations() {
+        return commentFormRules
+    },
+    setup() {
+        const serverMessageErrors = ref({})
+
+        return {
+            serverMessageErrors,
+            v$: useVuelidate({ $externalResults: serverMessageErrors }),
+            commentStore: useCommentsStore(),
+        }
+    },
+    methods: {
+        createEmitNewComment(event) {
+            if(!this.validateForm())
+                return
+
+            this.$emit('create-new-comment', this.getFormData(event))
+        },
+        validateForm() {
+            this.checkedCaptcha = true;
+            this.v$.$validate()
+            this.$refs.uploadFiles.v$.$validate()
+
+            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error || !this.isValidCaptcha)
+        },
+        getFormData(event) {
+            const formData = new FormData(event.currentTarget)
+            this.$refs.uploadFiles.files.forEach((file) => {
+                formData.append('files[]', file)
+            })
+
+            return formData
+        },
+        addServerMessageErrors(errors) {
+            Object.assign(this.serverMessageErrors, errors)
+            this.$refs.uploadFiles.addServerMessageErrors(errors)
+        }
+    },
+    components: {
+        ReplyBlock,
+        DropFiles,
+    }
+})
+</script>
+
 <template>
     <div class="new-comment-form bg-light shadow rounded-3 p-3">
         <form @submit.prevent="createEmitNewComment">
@@ -85,73 +152,6 @@
         </form>
     </div>
 </template>
-
-<script>
-import { ref } from "vue";
-import captcha from "@src/mixins/captcha";
-import { useVuelidate } from '@vuelidate/core'
-import { useCommentsStore } from "@src/store/comments";
-import commentFormRules from "@src/validators/commentFormRules";
-import ReplyBlock from "@src/components/comments/ReplyBlock";
-import DropFiles from "@src/components/shared/DropFiles";
-
-export default {
-    name: "NewCommentForm",
-    mixins: [captcha],
-    emits: ['create-new-comment'],
-    data() {
-        return {
-            name: null,
-            email: null,
-            url: null,
-            message: null,
-        }
-    },
-    validations() {
-        return commentFormRules
-    },
-    setup() {
-        const serverMessageErrors = ref({})
-
-        return {
-            serverMessageErrors,
-            v$: useVuelidate({ $externalResults: serverMessageErrors }),
-            commentStore: useCommentsStore(),
-        }
-    },
-    methods: {
-        createEmitNewComment(event) {
-            if(!this.validateForm())
-                return
-
-            this.$emit('create-new-comment', this.getFormData(event))
-        },
-        validateForm() {
-            this.checkedCaptcha = true;
-            this.v$.$validate()
-            this.$refs.uploadFiles.v$.$validate()
-
-            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error || !this.isValidCaptcha)
-        },
-        getFormData(event) {
-            const formData = new FormData(event.currentTarget)
-            this.$refs.uploadFiles.files.forEach((file) => {
-                formData.append('files[]', file)
-            })
-
-            return formData
-        },
-        addServerMessageErrors(errors) {
-            Object.assign(this.serverMessageErrors, errors)
-            this.$refs.uploadFiles.addServerMessageErrors(errors)
-        }
-    },
-    components: {
-        ReplyBlock,
-        DropFiles,
-    }
-}
-</script>
 
 <style scoped>
 @import url("/node_modules/vue-client-recaptcha/dist/style.css");
