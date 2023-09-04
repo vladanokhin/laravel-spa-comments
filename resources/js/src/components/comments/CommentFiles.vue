@@ -1,16 +1,17 @@
 <script>
 import {defineComponent} from 'vue'
-import {Tooltip} from "bootstrap";
-import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
+import BootstrapModal from "@src/components/shared/BootstrapModal";
+import tooltip from "@src/mixins/tooltip";
 
 export default defineComponent({
     name: "CommentFiles",
     components: {BootstrapModal},
+    mixins: [tooltip],
     props: {
         files: Array,
     },
     mounted() {
-        this.initTooltips()
+        this.initTooltips('.comment-files .file-name')
     },
     data() {
         return {
@@ -18,13 +19,6 @@ export default defineComponent({
         }
     },
     methods: {
-        initTooltips() {
-            const files = document.querySelectorAll('.comment-files .file-name')
-            for (let file of files) {
-              new Tooltip(file)
-            }
-
-        },
         openFile(file) {
             this.$parent.$refs.bootstrapModal.showModal();
             this.openedFile = file

@@ -11,7 +11,7 @@
             :class="{'is-invalid': v$.files.$errors.length}"
             @change="onUpload"
             ref="upload"
-            accept=".txt"
+            accept="text/plain"
         />
         <div
             class="dropzone-container"
@@ -35,7 +35,13 @@
                 v-for="file in files"
                 :key="file.name"
             >
-                <span class="text-truncate me-1">{{ file.name }}</span>
+                <span
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    :data-bs-title="file.name"
+                    class="text-truncate me-1 js-file">
+                    {{ file.name }}
+                </span>
                 <span
                     class="delete-file"
                     @click="deleteFile(files.indexOf(file))"
@@ -56,10 +62,13 @@
 import commentFilesRules from "@src/validators/commentFilesRules";
 import {ref} from "vue";
 import {useVuelidate} from "@vuelidate/core";
+import tooltip from "@src/mixins/tooltip";
+import {isEmpty} from "lodash";
 
 export default {
     name: "DropFiles",
     expose: ['files', 'addServerMessageErrors', 'v$'],
+    mixins: [tooltip],
     setup() {
         const serverMessageErrors = ref({})
 
@@ -96,14 +105,18 @@ export default {
             this.files.splice(index, 1)
         },
         clearErrorServerMessages(index) {
-            if(this.files.left === 0)
+            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
+                return
+
+            if(this.files.left === 0) {
                 this.serverMessageErrors = {}
-            else {
-                // Clear errors by file name
-                const fileName = this.files[index].name.toLowerCase()
-                this.serverMessageErrors['files'] = this.serverMessageErrors['files']
-                                                .filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
+                return
             }
+
+            // Clear errors by file name
+            const fileName = this.files[index].name.toLowerCase()
+            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
+                                            ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
         },
         addServerMessageErrors(errors) {
             // Get errors only for files
