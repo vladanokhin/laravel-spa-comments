@@ -52,7 +52,12 @@ export default defineComponent({
 
 <template>
     <TransitionGroup name="comment-list">
-        <div class="user-comment" v-for="comment in listComments" :key="comment.id">
+        <div
+            v-if="listComments"
+            class="user-comment"
+            v-for="comment in listComments"
+            :key="comment.id"
+        >
             <div class="row comment-header bg-body-secondary m-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
                     <div class="user-icon text-overflow">
@@ -83,6 +88,9 @@ export default defineComponent({
             <div class="child" v-if="comment.children && comment.children.length">
                 <CommentsList :comments="comment.children" :is-child="true"/>
             </div>
+        </div>
+        <div v-else class="vh-100 d-flex justify-content-center align-items-center">
+            <h3>There are no comments yet</h3>
         </div>
     </TransitionGroup>
 

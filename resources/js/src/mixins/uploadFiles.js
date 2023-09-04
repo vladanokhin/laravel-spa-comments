@@ -9,20 +9,20 @@ export default {
     },
     methods: {
         onUpload() {
-            this.files.push(...this.$refs.upload.files);
+            this.files.push(...this.$refs.upload.files)
         },
         dragOver(e) {
-            e.preventDefault();
-            this.isDragging = true;
+            e.preventDefault()
+            this.isDragging = true
         },
         dragLeave() {
-            this.isDragging = false;
+            this.isDragging = false
         },
         dropFile(e) {
             e.preventDefault();
-            this.$refs.upload.files = e.dataTransfer.files;
-            this.onUpload();
-            this.isDragging = false;
+            this.$refs.upload.files = e.dataTransfer.files
+            this.onUpload()
+            this.isDragging = false
         },
         deleteFile(index) {
             // this.clearErrorServerMessages(index)

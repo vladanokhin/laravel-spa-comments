@@ -11,14 +11,28 @@ export default defineComponent({
             hover: false,
         }
     },
+    watch: {
+        files: {
+            handler() {
+                if(!this.files[0])
+                    return
+
+                const reader = new FileReader()
+                reader.onload = (event) => {
+                    const uploadedFile = event.target.result
+                    if(uploadedFile !== this.files[0])
+                        this.imagePreviewUrl = uploadedFile
+                }
+
+                reader.readAsDataURL(this.files[0])
+            },
+            deep: true
+        },
+    },
+
     methods: {
         onChange() {
             this.onUpload()
-            const reader = new FileReader
-            reader.onload = (event) => {
-                this.imagePreviewUrl = event.target.result
-            }
-            reader.readAsDataURL(this.files[0])
             this.hover = false
         }
     },
