@@ -4,12 +4,12 @@ import commentFilesRules from "@src/validators/commentFilesRules";
 import {ref} from "vue";
 import {useVuelidate} from "@vuelidate/core";
 import tooltip from "@src/mixins/tooltip";
-import {isEmpty} from "lodash";
+import uploadFiles from "@src/mixins/uploadFiles";
 
 export default defineComponent({
     name: "DropFiles",
     expose: ['files', 'addServerMessageErrors', 'v$'],
-    mixins: [tooltip],
+    mixins: [tooltip, uploadFiles],
     setup() {
         const serverMessageErrors = ref({})
 
@@ -25,40 +25,6 @@ export default defineComponent({
         }
     },
     methods: {
-        onUpload() {
-            this.files.push(...this.$refs.upload.files);
-        },
-        dragOver(e) {
-            e.preventDefault();
-            this.isDragging = true;
-        },
-        dragLeave() {
-            this.isDragging = false;
-        },
-        dropFile(e) {
-            e.preventDefault();
-            this.$refs.upload.files = e.dataTransfer.files;
-            this.onUpload();
-            this.isDragging = false;
-        },
-        deleteFile(index) {
-            this.clearErrorServerMessages(index)
-            this.files.splice(index, 1)
-        },
-        clearErrorServerMessages(index) {
-            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
-                return
-
-            if(this.files.left === 0) {
-                this.serverMessageErrors = {}
-                return
-            }
-
-            // Clear errors by file name
-            const fileName = this.files[index].name.toLowerCase()
-            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
-                                                ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
-        },
         addServerMessageErrors(errors) {
             // Get errors only for files
             const errorsFile = Object.fromEntries(Object.entries(errors)
@@ -160,8 +126,10 @@ export default defineComponent({
     border: 1px dashed #9e9e9e;
     border-radius: 8px;
     width: 100%;
+    cursor: pointer;
+    &:hover,
     &.dragging {
-        border: 1px dashed #23395B;
+        border: 1px dashed #41707a;
         background: rgb(64 110 142 / 20%);
     }
 }
@@ -197,14 +165,6 @@ export default defineComponent({
         border-radius: 8px;
         cursor: pointer;
     }
-}
-
-.hidden-input {
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    width: 1px;
-    height: 1px;
 }
 
 .file-label {

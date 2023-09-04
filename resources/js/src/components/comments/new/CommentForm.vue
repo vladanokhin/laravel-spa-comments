@@ -6,6 +6,7 @@ import {useCommentsStore}  from "@src/store/comments";
 import commentFormRules from "@src/validators/commentFormRules";
 import ReplyBlock from "@src/components/comments/new/ReplyBlock";
 import DropFiles from "@src/components/shared/DropFiles";
+import UserImage from "@src/components/comments/new/UserImage";
 
 export default defineComponent({
     name: "CommentForm",
@@ -61,6 +62,7 @@ export default defineComponent({
     components: {
         ReplyBlock,
         DropFiles,
+        UserImage
     }
 })
 </script>
@@ -69,6 +71,9 @@ export default defineComponent({
     <div class="new-comment-form bg-light shadow rounded-3 p-3">
         <form @submit.prevent="createEmitNewComment">
             <ReplyBlock/>
+            <div class="d-flex justify-content-center me-2">
+                <UserImage/>
+            </div>
             <div class="mb-3">
                 <label for="name" class="form-label">User name</label>
                 <input
