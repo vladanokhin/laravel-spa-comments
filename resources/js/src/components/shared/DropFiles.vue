@@ -5,6 +5,7 @@ import {ref} from "vue";
 import {useVuelidate} from "@vuelidate/core";
 import tooltip from "@src/mixins/tooltip";
 import uploadFiles from "@src/mixins/uploadFiles";
+import {isEmpty} from "lodash";
 
 export default defineComponent({
     name: "DropFiles",
@@ -25,6 +26,18 @@ export default defineComponent({
         }
     },
     methods: {
+        deleteFile(index) {
+            this.clearServerErrorsByFileName(index)
+            this.files.splice(index, 1)
+        },
+        clearServerErrorsByFileName(index) {
+            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
+                return
+
+            const fileName = this.files[index].name.toLowerCase()
+            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
+                ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
+        },
         addServerMessageErrors(errors) {
             // Get errors only for files
             const errorsFile = Object.fromEntries(Object.entries(errors)

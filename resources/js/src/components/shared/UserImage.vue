@@ -1,10 +1,21 @@
 <script>
-import {defineComponent} from 'vue'
+import {defineComponent, ref} from 'vue'
 import uploadFiles from "@src/mixins/uploadFiles";
+import {useVuelidate} from "@vuelidate/core";
+import userAvatarRules from "@src/validators/userAvatarRules";
 
 export default defineComponent({
     name: "UserImage",
     mixins: [uploadFiles],
+    expose: ['files', 'addServerMessageErrors', 'v$'],
+    setup() {
+        const serverMessageErrors = ref({})
+
+        return {
+            serverMessageErrors,
+            v$: useVuelidate({ $externalResults: serverMessageErrors }),
+        }
+    },
     data() {
         return {
             imagePreviewUrl: null,
@@ -17,11 +28,10 @@ export default defineComponent({
                 if(!this.files[0])
                     return
 
+                // Create a preview of the uploaded image
                 const reader = new FileReader()
                 reader.onload = (event) => {
-                    const uploadedFile = event.target.result
-                    if(uploadedFile !== this.files[0])
-                        this.imagePreviewUrl = uploadedFile
+                    this.imagePreviewUrl = event.target.result
                 }
 
                 reader.readAsDataURL(this.files[0])
@@ -29,12 +39,23 @@ export default defineComponent({
             deep: true
         },
     },
-
     methods: {
         onChange() {
             this.onUpload()
             this.hover = false
-        }
+        },
+        addServerMessageErrors(errors) {
+            const errorsMessage = errors['avatar']
+
+            Object.assign(this.serverMessageErrors, {'files': errorsMessage})
+        },
+        deleteFile(index) {
+            this.files.splice(index, 1)
+            this.serverMessageErrors = {}
+        },
+    },
+    validations() {
+        return userAvatarRules
     },
 })
 </script>
@@ -42,44 +63,49 @@ export default defineComponent({
 <template>
     <div
         class="user-image"
-        :class="{'dragging': isDragging}"
+        :class="{'dragging': isDragging, 'is-invalid': v$.files.$errors.length}"
     >
         <input
             type="file"
-            id="user-image"
+            id="avatar"
             class="hidden-input"
+            :class="{'is-invalid': v$.files.$errors.length}"
             @change="onChange"
             ref="upload"
             accept="image/jpeg,image/png,image/gif"
+            name="avatar"
         />
         <div
-            class="preview"
             v-if="files.length"
+            class="preview"
             @mouseover="hover = true"
             @mouseleave="hover = false"
         >
             <img :src="imagePreviewUrl" alt="User avatar">
             <div class="image-btn-remove" v-if="hover">
-                <span
-                    class="text-decoration-underline"
-                    @click="deleteFile(0)"
-                >
-                    Remove
-                </span>
+            <span
+                class="text-decoration-underline"
+                @click="deleteFile(0)"
+            >
+                Remove
+            </span>
             </div>
         </div>
         <div
+            v-else
             @dragover="dragOver"
             @dragleave="dragLeave"
             @drop="dropFile"
             class="upload-text"
-            v-else
         >
-            <label for="user-image" class="file-label">
+            <label for="avatar" class="file-label">
                 <span>Upload image</span>
             </label>
 
         </div>
+    </div>
+    <div class="invalid-feedback" v-for="error in v$.files.$errors">
+        {{ error.$message }}
     </div>
 </template>
 
@@ -96,6 +122,7 @@ export default defineComponent({
     background: #f7fafc;
     font-size: 11px;
     cursor: pointer;
+    position: relative;
 
     &.dragging,
     &:hover {
@@ -119,15 +146,15 @@ export default defineComponent({
         width: 70px;
         text-align: center;
         position: absolute;
-        top: 83px;
+        top: 0;
         border-radius: 250px;
         color: white;
     }
-}
 
-.file-label {
-    width: 100%;
-    text-align: center;
-    cursor: pointer;
+    .file-label {
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+    }
 }
 </style>

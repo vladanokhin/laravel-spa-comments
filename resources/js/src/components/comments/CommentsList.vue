@@ -61,7 +61,23 @@ export default defineComponent({
             <div class="row comment-header bg-body-secondary m-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
                     <div class="user-icon text-overflow">
-                        <span class="text-uppercase fs-5">{{ comment.user.name.charAt(0) }}</span>
+                        <a
+                            v-if="comment.user.avatar?.url"
+                            :data-lightbox="comment.user.avatar.id"
+                            :data-title="comment.user.name"
+                            :href="comment.user.avatar.url"
+                        >
+                            <img
+                                :src="comment.user.avatar.url"
+                                :alt="comment.user.name"
+                            />
+                        </a>
+                        <span
+                            v-else
+                            class="text-uppercase fs-5"
+                        >
+                            {{ comment.user.name.charAt(0) }}
+                        </span>
                     </div>
                     <div class="user-name text-overflow ms-2">
                         <span class="fw-bold">{{ comment.user.name }}</span>
@@ -90,7 +106,9 @@ export default defineComponent({
             </div>
         </div>
         <div v-else class="vh-100 d-flex justify-content-center align-items-center">
-            <h3>There are no comments yet</h3>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading comments...</span>
+            </div>
         </div>
     </TransitionGroup>
 
@@ -103,39 +121,42 @@ export default defineComponent({
     />
 </template>
 
-<style scoped>
-
+<style lang="scss" scoped>
 .user-comment {
     overflow: hidden;
-}
 
-.user-comment > div.child {
-    margin-left: 45px;
-}
+    > div.child {
+        margin-left: 45px;
+    }
 
-.comment-header {
-    height: 38px;
-}
+    .comment-header {
+        height: 38px;
 
-.comment-header .user-icon {
-    height: 30px;
-    width: 30px;
-    border-radius: 250px;
-    border: 3px solid white;
-    color: #000000;
-    text-align: center;
-    line-height: 23px;
-    background: #bbb;
-}
+        .user-icon {
+            height: 30px;
+            width: 30px;
+            border-radius: 250px;
+            border: 3px solid white;
+            color: #000000;
+            text-align: center;
+            line-height: 23px;
+            background: #bbb;
+            cursor: pointer;
 
-.comment-header .text-overflow {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
+            &:hover {
+                border: 3px solid #41707a;
+            }
+        }
 
-.comment-header .comment-date {
-    font-size: 13px;
+        .text-overflow {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .comment-date {
+            font-size: 13px;
+        }
+    }
 }
 
 .comment-list-enter-active,

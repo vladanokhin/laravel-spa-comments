@@ -1,13 +1,12 @@
-import {maxLength, helpers} from "@vuelidate/validators";
+import {helpers} from "@vuelidate/validators";
 import {fileSize, mimes} from "@src/validators/customRules"
 
 
-const allowedMimeTypes = ['txt'],
-      maxKb = 100;
+const allowedMimeTypes = ['jpeg', 'png', 'gif'],
+      maxKb = 5000;
 
-const commentFormRules = {
+const userAvatarRules = {
     files: {
-        maxLength: maxLength(5),
         mimes: helpers.withMessage(
             `Only the following file types are allowed: ${allowedMimeTypes.toString()}`,
             mimes(allowedMimeTypes)
@@ -19,4 +18,4 @@ const commentFormRules = {
     },
 }
 
-export default commentFormRules
+export default userAvatarRules

@@ -24,23 +24,5 @@ export default {
             this.onUpload()
             this.isDragging = false
         },
-        deleteFile(index) {
-            // this.clearErrorServerMessages(index)
-            this.files.splice(index, 1)
-        },
-        clearErrorServerMessages(index) {
-            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
-                return
-
-            if(this.files.left === 0) {
-                this.serverMessageErrors = {}
-                return
-            }
-
-            // Clear errors by file name
-            const fileName = this.files[index].name.toLowerCase()
-            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
-                ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
-        },
     },
 }

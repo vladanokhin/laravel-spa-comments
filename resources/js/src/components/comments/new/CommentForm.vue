@@ -6,23 +6,12 @@ import {useCommentsStore}  from "@src/store/comments";
 import commentFormRules from "@src/validators/commentFormRules";
 import ReplyBlock from "@src/components/comments/new/ReplyBlock";
 import DropFiles from "@src/components/shared/DropFiles";
-import UserImage from "@src/components/comments/new/UserImage";
+import UserImage from "@src/components/shared/UserImage";
 
 export default defineComponent({
     name: "CommentForm",
     mixins: [captcha],
     emits: ['create-new-comment'],
-    data() {
-        return {
-            name: null,
-            email: null,
-            url: null,
-            message: null,
-        }
-    },
-    validations() {
-        return commentFormRules
-    },
     setup() {
         const serverMessageErrors = ref({})
 
@@ -30,6 +19,14 @@ export default defineComponent({
             serverMessageErrors,
             v$: useVuelidate({ $externalResults: serverMessageErrors }),
             commentStore: useCommentsStore(),
+        }
+    },
+    data() {
+        return {
+            name: null,
+            email: null,
+            url: null,
+            message: null,
         }
     },
     methods: {
@@ -43,8 +40,9 @@ export default defineComponent({
             this.checkedCaptcha = true;
             this.v$.$validate()
             this.$refs.uploadFiles.v$.$validate()
+            this.$refs.uploadImage.v$.$validate()
 
-            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error || !this.isValidCaptcha)
+            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error || this.$refs.uploadImage.v$.$error || !this.isValidCaptcha)
         },
         getFormData(event) {
             const formData = new FormData(event.currentTarget)
@@ -52,12 +50,20 @@ export default defineComponent({
                 formData.append('files[]', file)
             })
 
+            if(this.$refs.uploadImage.files.length)
+                formData.append('avatar', this.$refs.uploadImage.files[0])
+
             return formData
         },
         addServerMessageErrors(errors) {
             Object.assign(this.serverMessageErrors, errors)
             this.$refs.uploadFiles.addServerMessageErrors(errors)
+            this.$refs.uploadImage.addServerMessageErrors(errors)
+
         }
+    },
+    validations() {
+        return commentFormRules
     },
     components: {
         ReplyBlock,
@@ -71,8 +77,8 @@ export default defineComponent({
     <div class="new-comment-form bg-light shadow rounded-3 p-3">
         <form @submit.prevent="createEmitNewComment">
             <ReplyBlock/>
-            <div class="d-flex justify-content-center me-2">
-                <UserImage/>
+            <div class="d-flex flex-column align-items-center me-2">
+                <UserImage ref="uploadImage"/>
             </div>
             <div class="mb-3">
                 <label for="name" class="form-label">User name</label>
@@ -103,7 +109,7 @@ export default defineComponent({
                 </div>
             </div>
             <div class="mb-3">
-                <label for="homepage" class="form-label">Home page</label>
+                <label for="url" class="form-label">Home page</label>
                 <input
                     v-model="v$.url.$model"
                     type="url"
