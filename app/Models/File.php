@@ -8,12 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * App\Models\File
+ *
  * @property integer $id
  * @property string $name
  * @property string $path
  * @property Comment $comment
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property int|null $comment_id
+ * @method static \Database\Factories\FileFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|File newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|File newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|File query()
+ * @method static \Illuminate\Database\Eloquent\Builder|File whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|File whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|File whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|File whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|File wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|File whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class File extends Model
 {

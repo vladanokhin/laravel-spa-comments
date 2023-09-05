@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * App\Models\Comment
+ *
  * @property integer $id
  * @property string $message
  * @property User $user
@@ -18,6 +20,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property File $files
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property int $user_id
+ * @property int|null $parent_id
+ * @property-read int|null $children_count
+ * @property-read int|null $files_count
+ * @method static Builder|Comment base()
+ * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
+ * @method static Builder|Comment newModelQuery()
+ * @method static Builder|Comment newQuery()
+ * @method static Builder|Comment query()
+ * @method static Builder|Comment whereCreatedAt($value)
+ * @method static Builder|Comment whereId($value)
+ * @method static Builder|Comment whereMessage($value)
+ * @method static Builder|Comment whereParentId($value)
+ * @method static Builder|Comment whereUpdatedAt($value)
+ * @method static Builder|Comment whereUserId($value)
+ * @mixin \Eloquent
  */
 class Comment extends Model
 {
