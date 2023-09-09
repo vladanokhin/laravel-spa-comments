@@ -45,7 +45,7 @@ class CommentStoreRequest extends FormRequest
             'reply'   => 'integer|nullable',
             'files'   => 'max:5',
             'files.*' => 'file|max:100|mimes:txt',
-            'avatar'  => 'file|max:20|mimes:jpg,png,gif'
+            'avatar'  => 'file|max:5000|mimes:jpg,png,gif'
         ];
     }
 }

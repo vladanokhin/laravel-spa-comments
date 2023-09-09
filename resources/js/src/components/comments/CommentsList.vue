@@ -4,6 +4,8 @@ import moment from "moment";
 import {useCommentsStore} from "@src/store/comments";
 import {Bootstrap5Pagination} from "laravel-vue-pagination";
 import CommentFiles from "@src/components/comments/CommentFiles";
+import BootstrapModal from "@src/components/shared/BootstrapModal";
+import {numeric} from "@vuelidate/validators";
 
 export default defineComponent({
     name: "CommentsList",
@@ -19,6 +21,8 @@ export default defineComponent({
     mounted() {
         if(typeof this.comments === 'undefined')
             this.commentStore.loadListComments();
+
+        this.commentStore.countList()
     },
     computed: {
         listComments() {
@@ -41,11 +45,18 @@ export default defineComponent({
                         window.scrollTo(0, 0);
                     }, 250)
                 })
+        },
+        openFile(fileId) {
+            this.commentStore.getFile(fileId)
+                .then((file) => {
+                    this.$refs.bootstrapModal.show(file.name, file.content);
+                })
         }
     },
     components: {
         Bootstrap5Pagination,
         CommentFiles,
+        BootstrapModal,
     }
 })
 </script>
@@ -99,7 +110,11 @@ export default defineComponent({
                 <div class="col-12">
                     {{ comment.message }}
                 </div>
-                <CommentFiles :files="comment.files" v-if="comment.files.length"/>
+                <CommentFiles
+                    :files="comment.files"
+                    v-if="comment.files.length"
+                    @open-file="openFile"
+                />
             </div>
             <div class="child" v-if="comment.children && comment.children.length">
                 <CommentsList :comments="comment.children" :is-child="true"/>
@@ -119,6 +134,7 @@ export default defineComponent({
         :data="commentStore.listComments"
         @pagination-change-page="paginationChangePage"
     />
+    <BootstrapModal ref="bootstrapModal" :depth="this.commentStore.countOfCommentsList"/>
 </template>
 
 <style lang="scss" scoped>

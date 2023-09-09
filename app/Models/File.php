@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Eloquent;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * App\Models\File
@@ -27,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|File whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|File wherePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|File whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class File extends Model
 {
@@ -45,5 +48,17 @@ class File extends Model
     public function comment()
     {
        return $this->belongsTo(Comment::class);
+    }
+
+
+    /**
+     * Get content file.
+     * @return Attribute
+     */
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Storage::get($this->path),
+        );
     }
 }

@@ -17,6 +17,10 @@ class FileResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'content' => $this->when(
+                $request->routeIs('comments.files.show'),
+                $this->content
+            ),
         ];
     }
 }

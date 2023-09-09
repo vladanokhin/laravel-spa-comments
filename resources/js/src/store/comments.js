@@ -5,6 +5,8 @@ export const useCommentsStore = defineStore('comments', {
     state: () => ({
         listComments: {},
         replyToComment: {},
+        lastOpenedFile: {},
+        countOfCommentsList: 0,
     }),
     getters: {},
     actions: {
@@ -22,6 +24,24 @@ export const useCommentsStore = defineStore('comments', {
         },
 
         /**
+         * Get file content by file id.
+         * @param id
+         * @return {Promise<axios.AxiosResponse<any>>|Promise<any>}
+         */
+        getFile(id) {
+            if (id === this.lastOpenedFile?.id)
+                return new Promise((resolve, reject) => {
+                    resolve(this.lastOpenedFile)
+                });
+
+            return axios.get(`api/comments/files/show/${id}`)
+                .then((response) => {
+                    this.lastOpenedFile = response['data']['data']
+                    return this.lastOpenedFile
+                })
+        },
+
+        /**
          * Get list of comments and authors
          * @param {number} page number of page.
          * @return {Promise<axios.AxiosResponse<any>>}
@@ -33,6 +53,12 @@ export const useCommentsStore = defineStore('comments', {
                     this.listComments = res['data'];
                 })
         },
+
+        countList() {
+            this.countOfCommentsList++
+        },
+
+        // TODO move to getters
         filterByUserField(field, asc = true) {
             const sorted = this.listComments['data']
                                 .sort((a, b) => a.user[field].localeCompare(b.user[field]))
