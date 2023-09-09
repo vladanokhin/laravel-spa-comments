@@ -4,6 +4,7 @@ import Header from '@src/components/comments/Header'
 import NewCommentForm from '@src/components/comments/new/CommentForm'
 import CommentsList from "@src/components/comments/CommentsList";
 import {useCommentsStore} from "@src/store/comments.js";
+import BootstrapModal from "@src/components/shared/BootstrapModal";
 
 export default defineComponent({
     name: "Comments",
@@ -29,8 +30,15 @@ export default defineComponent({
                     this.$refs.commentForm.addServerMessageErrors(error.response.data.errors)
                 })
         },
+        openFile(fileId) {
+            this.commentStore.getFile(fileId)
+                .then((file) => {
+                    this.$refs.bootstrapModal.show(file.name, file.content);
+                })
+        }
     },
     components: {
+        BootstrapModal,
         Header,
         NewCommentForm,
         CommentsList,
@@ -44,7 +52,10 @@ export default defineComponent({
         <div class="row d-flex justify-content-between">
             <div class="col-8 col-sm-5 col-md-8">
                 <div class="bg-light shadow rounded-3 p-3 mb-3">
-                    <CommentsList :key="lastComment.id"/>
+                    <CommentsList
+                        :key="lastComment.id"
+                        @open-file="openFile"
+                    />
                 </div>
             </div>
             <div class="col-4 col-sm-7 col-md-4">
@@ -56,6 +67,7 @@ export default defineComponent({
             </div>
         </div>
     </div>
+    <BootstrapModal ref="bootstrapModal"/>
 </template>
 
 <style scoped>

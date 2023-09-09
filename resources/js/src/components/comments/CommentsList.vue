@@ -5,7 +5,6 @@ import {useCommentsStore} from "@src/store/comments";
 import {Bootstrap5Pagination} from "laravel-vue-pagination";
 import CommentFiles from "@src/components/comments/CommentFiles";
 import BootstrapModal from "@src/components/shared/BootstrapModal";
-import {numeric} from "@vuelidate/validators";
 
 export default defineComponent({
     name: "CommentsList",
@@ -13,6 +12,7 @@ export default defineComponent({
         'comments': Object,
         'isChild': false,
     },
+    emits: ['open-file'],
     setup() {
         return {
             commentStore: useCommentsStore(),
@@ -46,11 +46,8 @@ export default defineComponent({
                     }, 250)
                 })
         },
-        openFile(fileId) {
-            this.commentStore.getFile(fileId)
-                .then((file) => {
-                    this.$refs.bootstrapModal.show(file.name, file.content);
-                })
+        emitOpenFile(fileId) {
+            this.$emit('open-file', fileId)
         }
     },
     components: {
@@ -113,11 +110,15 @@ export default defineComponent({
                 <CommentFiles
                     :files="comment.files"
                     v-if="comment.files.length"
-                    @open-file="openFile"
+                    @open-file="emitOpenFile"
                 />
             </div>
             <div class="child" v-if="comment.children && comment.children.length">
-                <CommentsList :comments="comment.children" :is-child="true"/>
+                <CommentsList
+                    :comments="comment.children"
+                    :is-child="true"
+                    @open-file="emitOpenFile"
+                />
             </div>
         </div>
         <div v-else class="vh-100 d-flex justify-content-center align-items-center">
@@ -134,7 +135,6 @@ export default defineComponent({
         :data="commentStore.listComments"
         @pagination-change-page="paginationChangePage"
     />
-    <BootstrapModal ref="bootstrapModal" :depth="this.commentStore.countOfCommentsList"/>
 </template>
 
 <style lang="scss" scoped>

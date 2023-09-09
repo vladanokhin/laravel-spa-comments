@@ -1,13 +1,11 @@
 <script>
 import {defineComponent} from 'vue'
-import BootstrapModal from "@src/components/shared/BootstrapModal";
 import tooltip from "@src/mixins/tooltip";
 import {useCommentsStore} from "@src/store/comments";
 
 export default defineComponent({
     name: "CommentFiles",
-    emits: ['openFile'],
-    // components: {BootstrapModal},
+    emits: ['open-file'],
     mixins: [tooltip],
     props: {
         files: Array,
@@ -21,12 +19,8 @@ export default defineComponent({
         this.initTooltips('.comment-files .file-name')
     },
     methods: {
-        openFile(fileId) {
-            this.$.emit('openFile', fileId)
-            // this.commentStore.getFile(fileId)
-            //     .then((file) => {
-            //         this.$refs.bootstrapModal.showModal(file.name, file.content);
-            //     })
+        emitOpenFile(fileId) {
+            this.$emit('open-file', fileId)
         },
     },
 })
@@ -36,7 +30,7 @@ export default defineComponent({
     <div class="col comment-files d-flex">
         <div
             v-for="file in files" :key="file.id"
-            @click="openFile(file.id)"
+            @click="emitOpenFile(file.id)"
             class="d-flex align-items-center justify-content-center flex-column me-2"
         >
             <i class="bi bi-file-earmark-medical"></i>
@@ -50,7 +44,6 @@ export default defineComponent({
             </span>
         </div>
     </div>
-<!--    <BootstrapModal ref="bootstrapModal"/>-->
 </template>
 
 <style lang="scss" scoped>

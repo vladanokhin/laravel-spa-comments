@@ -4,12 +4,9 @@ import {Modal} from "bootstrap";
 
 export default defineComponent({
     name: "BootstrapModal",
-    props: {
-        'depth': Number,
-    },
     expose: ['show', 'close'],
     mounted() {
-        this.modal = new Modal(document.getElementById(`js-bootstrap-modal-${this.depth}`))
+        this.modal = new Modal(document.getElementById('js-bootstrap-modal'))
     },
     data() {
         return {
@@ -34,7 +31,7 @@ export default defineComponent({
 
 <template>
     <div class="modal fade"
-         :id="'js-bootstrap-modal-' + depth"
+         id="js-bootstrap-modal"
          data-bs-keyboard="false"
          tabindex="-1"
          aria-labelledby="staticBackdropLabel"
@@ -48,7 +45,6 @@ export default defineComponent({
                         @click="close"
                         type="button"
                         class="btn-close"
-                        data-bs-dismiss="modal"
                         aria-label="Close"
                     >
                     </button>
@@ -61,7 +57,6 @@ export default defineComponent({
                         @click="close"
                         type="button"
                         class="btn btn-secondary"
-                        data-bs-dismiss="modal"
                     >
                         Close
                     </button>
