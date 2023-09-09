@@ -58,7 +58,7 @@ class File extends Model
     protected function content(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => Storage::get($this->path),
+            get: fn () => Storage::get($this->path),
         );
     }
 }

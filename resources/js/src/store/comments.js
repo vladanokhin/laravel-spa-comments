@@ -6,7 +6,6 @@ export const useCommentsStore = defineStore('comments', {
         listComments: {},
         replyToComment: {},
         lastOpenedFile: {},
-        countOfCommentsList: 0,
     }),
     getters: {},
     actions: {
@@ -52,10 +51,6 @@ export const useCommentsStore = defineStore('comments', {
                 .then((res) => {
                     this.listComments = res['data'];
                 })
-        },
-
-        countList() {
-            this.countOfCommentsList++
         },
 
         // TODO move to getters

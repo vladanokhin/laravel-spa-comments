@@ -21,8 +21,6 @@ export default defineComponent({
     mounted() {
         if(typeof this.comments === 'undefined')
             this.commentStore.loadListComments();
-
-        this.commentStore.countList()
     },
     computed: {
         listComments() {
