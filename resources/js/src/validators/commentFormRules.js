@@ -16,6 +16,7 @@ const commentFormRules = {
         required,
         minLength: minLength(3),
         maxLength: maxLength(250),
+        $autoDirty: true,
     },
 }
 

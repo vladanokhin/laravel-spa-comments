@@ -103,7 +103,7 @@ export default defineComponent({
             </div>
             <div class="row comment-text m-2">
                 <div class="col-12">
-                    {{ comment.message }}
+                    <span v-html="comment.message"></span>
                 </div>
                 <CommentFiles
                     :files="comment.files"

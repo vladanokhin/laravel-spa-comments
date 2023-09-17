@@ -7,6 +7,7 @@ import commentFormRules from "@src/validators/commentFormRules";
 import ReplyBlock from "@src/components/comments/new/ReplyBlock";
 import DropFiles from "@src/components/shared/DropFiles";
 import UserImage from "@src/components/shared/UserImage";
+import { QuillEditor } from '@vueup/vue-quill'
 
 export default defineComponent({
     name: "CommentForm",
@@ -27,6 +28,7 @@ export default defineComponent({
             email: null,
             url: null,
             message: null,
+            editorMessage: null,
         }
     },
     methods: {
@@ -34,7 +36,7 @@ export default defineComponent({
             if(!this.validateForm())
                 return
 
-            this.$emit('create-new-comment', this.getFormData(event))
+            this.$emit('create-new-comment', this.getFormData(event.currentTarget))
         },
         validateForm() {
             this.checkedCaptcha = true;
@@ -42,10 +44,11 @@ export default defineComponent({
             this.$refs.uploadFiles.v$.$validate()
             this.$refs.uploadImage.v$.$validate()
 
-            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error || this.$refs.uploadImage.v$.$error || !this.isValidCaptcha)
+            return !(this.v$.$error || this.$refs.uploadFiles.v$.$error
+                   || this.$refs.uploadImage.v$.$error || !this.isValidCaptcha)
         },
-        getFormData(event) {
-            const formData = new FormData(event.currentTarget)
+        getFormData(form) {
+            const formData = new FormData(form)
             this.$refs.uploadFiles.files.forEach((file) => {
                 formData.append('files[]', file)
             })
@@ -53,14 +56,28 @@ export default defineComponent({
             if(this.$refs.uploadImage.files.length)
                 formData.append('avatar', this.$refs.uploadImage.files[0])
 
+            formData.set('message', this.$refs.editor.getHTML())
+            formData.set('clear_message', this.$refs.editor.getText())
+
             return formData
         },
         addServerMessageErrors(errors) {
+            // Rename the key to display messages correctly
+            if('clear_message' in errors) {
+                errors['message'] = errors['clear_message']
+                delete errors['clear_message']
+            }
+            // Setting and displaying errors from the server
             Object.assign(this.serverMessageErrors, errors)
+            // Displaying errors for uploaded files
             this.$refs.uploadFiles.addServerMessageErrors(errors)
             this.$refs.uploadImage.addServerMessageErrors(errors)
-
-        }
+        },
+    },
+    watch: {
+        editorMessage() {
+            this.message = this.$refs.editor.getText()
+        },
     },
     validations() {
         return commentFormRules
@@ -68,7 +85,8 @@ export default defineComponent({
     components: {
         ReplyBlock,
         DropFiles,
-        UserImage
+        UserImage,
+        QuillEditor,
     }
 })
 </script>
@@ -122,17 +140,19 @@ export default defineComponent({
                     {{ error.$message }}
                 </div>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" :class="{'has-errors': v$.message.$errors.length}">
                 <label for="message" class="form-label">Message</label>
-                <textarea
+                <input
+                    type="hidden"
                     v-model="v$.message.$model"
-                    class="form-control"
-                    :class="{'is-invalid': v$.message.$errors.length}"
-                    id="message"
-                    rows="3"
-                    name="message"
                 >
-                </textarea>
+                <QuillEditor
+                    :toolbar="['bold', 'italic', 'code-block', 'link']"
+                    v-model:content="editorMessage"
+                    content-type="html"
+                    ref="editor"
+                />
+                <div :class="{'is-invalid': v$.message.$errors.length}"></div>
                 <div class="invalid-feedback" v-for="error in v$.message.$errors">
                     {{ error.$message }}
                 </div>
@@ -143,7 +163,7 @@ export default defineComponent({
                     :value="captcha"
                     @isValid="setIsValidCaptcha"
                     @getCode="newCaptchaCode"
-                    class="mb-3"
+                    class="mb-3 justify-content-start"
                 />
                 <input
                     v-model="captcha"
@@ -165,10 +185,5 @@ export default defineComponent({
 </template>
 
 <style scoped>
-@import url("/node_modules/vue-client-recaptcha/dist/style.css");
-
-.vue_client_recaptcha {
-    justify-content: start;
-}
 
 </style>

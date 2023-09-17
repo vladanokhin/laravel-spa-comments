@@ -1,4 +1,6 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons";
-@import "lightbox2/dist/css/lightbox.min.css";
+@import "lightbox2/dist/css/lightbox.min";
+@import '@vueup/vue-quill/dist/vue-quill.snow';
+@import "/node_modules/vue-client-recaptcha/dist/style.css";
 @import "./shared";

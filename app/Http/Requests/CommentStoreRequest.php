@@ -18,7 +18,9 @@ class CommentStoreRequest extends FormRequest
 
     public function attributes()
     {
-        $attributes = [];
+        $attributes = [
+            'clear_message' => 'message',
+        ];
 
         // Replacing attributes on a file name. Example, "file.0" to "some.txt"
         if($this['files']) {
@@ -38,14 +40,15 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'    => 'required|string|min:3|max:30|alpha_num:ascii|unique:users,name',
-            'email'   => 'required|email|unique:users,email',
-            'url'     => 'url|nullable',
-            'message' => 'required|string|min:3|max:250',
-            'reply'   => 'integer|nullable',
-            'files'   => 'max:5',
-            'files.*' => 'file|max:100|mimes:txt',
-            'avatar'  => 'file|max:5000|mimes:jpg,png,gif'
+            'name'          => 'required|string|min:3|max:30|alpha_num:ascii|unique:users,name',
+            'email'         => 'required|email|unique:users,email',
+            'url'           => 'url|nullable',
+            'clear_message' => 'required|string|min:3|max:250',
+            'message'       => 'required|string',
+            'reply'         => 'integer|nullable',
+            'files'         => 'max:5',
+            'files.*'       => 'file|max:100|mimes:txt',
+            'avatar'        => 'file|max:5000|mimes:jpg,png,gif'
         ];
     }
 }
