@@ -8,6 +8,7 @@ import ReplyBlock from "@src/components/comments/new/ReplyBlock";
 import DropFiles from "@src/components/shared/DropFiles";
 import UserImage from "@src/components/shared/UserImage";
 import { QuillEditor } from '@vueup/vue-quill'
+import PreviewMode from "@src/components/comments/new/PreviewMode";
 
 export default defineComponent({
     name: "CommentForm",
@@ -29,14 +30,15 @@ export default defineComponent({
             url: null,
             message: null,
             editorMessage: null,
+            isPreviewMode: false,
         }
     },
     methods: {
-        createEmitNewComment(event) {
+        createEmitNewComment() {
             if(!this.validateForm())
                 return
 
-            this.$emit('create-new-comment', this.getFormData(event.currentTarget))
+            this.$emit('create-new-comment', this.getFormData())
         },
         validateForm() {
             this.checkedCaptcha = true;
@@ -47,8 +49,8 @@ export default defineComponent({
             return !(this.v$.$error || this.$refs.uploadFiles.v$.$error
                    || this.$refs.uploadImage.v$.$error || !this.isValidCaptcha)
         },
-        getFormData(form) {
-            const formData = new FormData(form)
+        getFormData() {
+            const formData = new FormData(document.getElementById('js-new-comment-form'))
             this.$refs.uploadFiles.files.forEach((file) => {
                 formData.append('files[]', file)
             })
@@ -76,7 +78,7 @@ export default defineComponent({
     },
     watch: {
         editorMessage() {
-            this.message = this.$refs.editor.getText()
+            this.message = this.$refs.editor.getText().trimEnd()
         },
     },
     validations() {
@@ -87,13 +89,14 @@ export default defineComponent({
         DropFiles,
         UserImage,
         QuillEditor,
+        PreviewMode
     }
 })
 </script>
 
 <template>
     <div class="new-comment-form bg-light shadow rounded-3 p-3">
-        <form @submit.prevent="createEmitNewComment">
+        <form @submit.prevent="createEmitNewComment" id="js-new-comment-form">
             <ReplyBlock/>
             <div class="d-flex flex-column align-items-center me-2">
                 <UserImage ref="uploadImage"/>
@@ -107,6 +110,7 @@ export default defineComponent({
                     :class="{'is-invalid': v$.name.$errors.length}"
                     id="name"
                     name="name"
+                    :disabled="isPreviewMode"
                 >
                 <div class="invalid-feedback" v-for="error in v$.name.$errors">
                     {{ error.$message }}
@@ -121,6 +125,7 @@ export default defineComponent({
                     :class="{'is-invalid': v$.email.$errors.length}"
                     id="email"
                     name="email"
+                    :disabled="isPreviewMode"
                 >
                 <div class="invalid-feedback" v-for="error in v$.email.$errors">
                     {{ error.$message }}
@@ -135,6 +140,7 @@ export default defineComponent({
                     :class="{'is-invalid': v$.url.$errors.length}"
                     id="url"
                     name="url"
+                    :disabled="isPreviewMode"
                 >
                 <div class="invalid-feedback" v-for="error in v$.url.$errors">
                     {{ error.$message }}
@@ -151,6 +157,7 @@ export default defineComponent({
                     v-model:content="editorMessage"
                     content-type="html"
                     ref="editor"
+                    :enable="!isPreviewMode"
                 />
                 <div :class="{'is-invalid': v$.message.$errors.length}"></div>
                 <div class="invalid-feedback" v-for="error in v$.message.$errors">
@@ -178,7 +185,13 @@ export default defineComponent({
             </div>
             <div class="mb-3">
                 <DropFiles ref="uploadFiles"/>
-                <button type="submit" class="btn btn-outline-primary mt-3">Add a comment</button>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-outline-primary mt-3">Add a comment</button>
+                    <PreviewMode
+                        @enable-preview="isPreviewMode = true"
+                        @disable-preview="isPreviewMode = false"
+                    />
+                </div>
             </div>
         </form>
     </div>
