@@ -6,6 +6,7 @@ import {useVuelidate} from "@vuelidate/core";
 import tooltip from "@src/mixins/tooltip";
 import uploadFiles from "@src/mixins/uploadFiles";
 import {isEmpty} from "lodash";
+import {useCommentsStore} from "@src/store/comments";
 
 export default defineComponent({
     name: "DropFiles",
@@ -17,12 +18,14 @@ export default defineComponent({
         return {
             serverMessageErrors,
             v$: useVuelidate({ $externalResults: serverMessageErrors }),
+            commentStore: useCommentsStore(),
         }
     },
     data() {
         return {
             isDragging: false,
             files: [],
+            urlUpload: 'api/comments/files/upload/',
         }
     },
     methods: {
@@ -71,8 +74,6 @@ export default defineComponent({
             id="user-file"
             class="hidden-input"
             :class="{'is-invalid': v$.files.$errors.length}"
-            @change="onUpload"
-            ref="upload"
             accept="text/plain"
         />
         <div
@@ -82,6 +83,7 @@ export default defineComponent({
             @dragleave="dragLeave"
             @drop="dropFile"
             v-if="files.length === 0"
+            data-key-name="files[]"
         >
             <label for="user-file" class="file-label">
                 <span v-if="isDragging">Release to drop files here.</span>

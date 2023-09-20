@@ -1,5 +1,3 @@
-import {isEmpty} from "lodash";
-
 export default {
     data() {
         return {
@@ -11,18 +9,29 @@ export default {
         onUpload() {
             this.files.push(...this.$refs.upload.files)
         },
-        dragOver(e) {
-            e.preventDefault()
+        dragOver(event) {
+            event.preventDefault()
             this.isDragging = true
         },
         dragLeave() {
             this.isDragging = false
         },
-        dropFile(e) {
-            e.preventDefault();
-            this.$refs.upload.files = e.dataTransfer.files
-            this.onUpload()
+        dropFile(event) {
+            event.preventDefault();
+            this.uploadToServer(event.dataTransfer.files, event.currentTarget.getAttribute('data-key-name'))
+                .then((response) => {
+                    this.files.push(...response.data.data)
+                })
             this.isDragging = false
+
         },
+        uploadToServer(files, keyName) {
+            const formData = new FormData()
+            Array.from(files).forEach((file) => {
+                formData.append(keyName, file)
+            })
+
+            return this.commentStore.uploadFiles(this.urlUpload, formData)
+        }
     },
 }

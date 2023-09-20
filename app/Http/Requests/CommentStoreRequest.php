@@ -46,9 +46,6 @@ class CommentStoreRequest extends FormRequest
             'clear_message' => 'required|string|min:3|max:250',
             'message'       => 'required|string',
             'reply'         => 'integer|nullable',
-            'files'         => 'max:5',
-            'files.*'       => 'file|max:100|mimes:txt',
-            'avatar'        => 'file|max:5000|mimes:jpg,png,gif'
         ];
     }
 }

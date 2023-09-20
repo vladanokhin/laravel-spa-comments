@@ -15,11 +15,7 @@ export const useCommentsStore = defineStore('comments', {
          * @return {Promise<axios.AxiosResponse<any>>}
          */
         addComment(data) {
-            return axios.post('api/comments/new', data, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
+            return axios.post('api/comments/new', data)
         },
 
         /**
@@ -53,7 +49,21 @@ export const useCommentsStore = defineStore('comments', {
                 })
         },
 
-        // TODO move to getters
+        /**
+         * Upload files
+         * @param {string} url
+         * @param {FormData} data
+         * @return {Promise<axios.AxiosResponse<any>>}
+         */
+        uploadFiles(url, data) {
+            return axios.post(`${url}`, data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+        },
+
+
         filterByUserField(field, asc = true) {
             const sorted = this.listComments['data']
                                 .sort((a, b) => a.user[field].localeCompare(b.user[field]))

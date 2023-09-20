@@ -3,6 +3,7 @@ import {defineComponent, ref} from 'vue'
 import uploadFiles from "@src/mixins/uploadFiles";
 import {useVuelidate} from "@vuelidate/core";
 import userAvatarRules from "@src/validators/userAvatarRules";
+import {useCommentsStore} from "@src/store/comments";
 
 export default defineComponent({
     name: "UserImage",
@@ -14,12 +15,14 @@ export default defineComponent({
         return {
             serverMessageErrors,
             v$: useVuelidate({ $externalResults: serverMessageErrors }),
+            commentStore: useCommentsStore(),
         }
     },
     data() {
         return {
             imagePreviewUrl: null,
             hover: false,
+            urlUpload: 'api/comments/files/upload/avatar',
         }
     },
     watch: {
@@ -28,20 +31,13 @@ export default defineComponent({
                 if(!this.files[0])
                     return
 
-                // Create a preview of the uploaded image
-                const reader = new FileReader()
-                reader.onload = (event) => {
-                    this.imagePreviewUrl = event.target.result
-                }
-
-                reader.readAsDataURL(this.files[0])
+                this.imagePreviewUrl = this.files[0].url
             },
             deep: true
         },
     },
     methods: {
         onChange() {
-            this.onUpload()
             this.hover = false
         },
         addServerMessageErrors(errors) {
@@ -71,9 +67,7 @@ export default defineComponent({
             class="hidden-input"
             :class="{'is-invalid': v$.files.$errors.length}"
             @change="onChange"
-            ref="upload"
             accept="image/jpeg,image/png,image/gif"
-            name="avatar"
         />
         <div
             v-if="files.length"
@@ -97,6 +91,7 @@ export default defineComponent({
             @dragleave="dragLeave"
             @drop="dropFile"
             class="upload-text"
+            data-key-name="avatar"
         >
             <label for="avatar" class="file-label">
                 <span>Upload image</span>
