@@ -16,6 +16,20 @@ class UploadFileRequest extends FormRequest
         return true;
     }
 
+    public function attributes()
+    {
+        $attributes = [];
+
+        // Replacing attributes on a file name. Example, "file.0" to "some.txt"
+        if($this['files']) {
+            foreach($this['files'] as $key => $file) {
+                $attributes['files.' . $key] = ' file "'. $file->getClientOriginalName() . '"';
+            }
+        }
+
+        return $attributes;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

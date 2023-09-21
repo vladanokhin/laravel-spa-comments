@@ -52,11 +52,11 @@ export default defineComponent({
         getFormData() {
             const formData = new FormData(document.getElementById('js-new-comment-form'))
             this.$refs.uploadFiles.files.forEach((file) => {
-                formData.append('files[]', file)
+                formData.append('files[]', file.id)
             })
 
             if(this.$refs.uploadImage.files.length)
-                formData.append('avatar', this.$refs.uploadImage.files[0])
+                formData.append('avatar', this.$refs.uploadImage.files[0].id)
 
             formData.set('message', this.$refs.editor.getHTML())
             formData.set('clear_message', this.$refs.editor.getText())
@@ -178,6 +178,7 @@ export default defineComponent({
                     class="form-control"
                     :class="{'is-invalid': !isValidCaptcha && checkedCaptcha}"
                     id="captcha"
+                    :disabled="isPreviewMode"
                 >
                 <div class="invalid-feedback">
                     Invalid captcha
