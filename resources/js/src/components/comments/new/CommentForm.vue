@@ -49,14 +49,26 @@ export default defineComponent({
             return !(this.v$.$error || this.$refs.uploadFiles.v$.$error
                    || this.$refs.uploadImage.v$.$error || !this.isValidCaptcha)
         },
-        getFormData() {
+        getFormData(fullFilesData = false) {
             const formData = new FormData(document.getElementById('js-new-comment-form'))
-            this.$refs.uploadFiles.files.forEach((file) => {
-                formData.append('files[]', file.id)
-            })
+            let files = [...this.$refs.uploadFiles.files]
 
-            if(this.$refs.uploadImage.files.length)
-                formData.append('avatar', this.$refs.uploadImage.files[0].id)
+            if(fullFilesData) {
+                formData.append('files[]', JSON.stringify(files))
+            }
+            else {
+                files.forEach((file) => {
+                    formData.append('files[]', file.id)
+                })
+            }
+
+            if(this.$refs.uploadImage.files.length) {
+                formData.append(
+                    'avatar',
+                    fullFilesData ? JSON.stringify(this.$refs.uploadImage.files) : this.$refs.uploadImage.files[0].id
+                )
+
+            }
 
             formData.set('message', this.$refs.editor.getHTML())
             formData.set('clear_message', this.$refs.editor.getText())
@@ -187,7 +199,13 @@ export default defineComponent({
             <div class="mb-3">
                 <DropFiles ref="uploadFiles"/>
                 <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-outline-primary mt-3">Add a comment</button>
+                    <button
+                        type="submit"
+                        class="btn btn-outline-primary mt-3"
+                        :disabled="isPreviewMode"
+                    >
+                        Add a comment
+                    </button>
                     <PreviewMode
                         @enable-preview="isPreviewMode = true"
                         @disable-preview="isPreviewMode = false"

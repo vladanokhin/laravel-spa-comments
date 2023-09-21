@@ -63,6 +63,7 @@ export default defineComponent({
             class="user-comment"
             v-for="comment in listComments"
             :key="comment.id"
+            :class="{'is-preview': comment.preview ?? false}"
         >
             <div class="row comment-header bg-body-secondary m-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
@@ -138,6 +139,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .user-comment {
     overflow: hidden;
+
+    &.is-preview {
+        background-color: rgb(239 220 168 / 50%);
+    }
 
     > div.child {
         margin-left: 45px;

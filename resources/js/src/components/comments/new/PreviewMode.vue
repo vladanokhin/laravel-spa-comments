@@ -20,22 +20,30 @@ export default defineComponent({
                 return
 
             this.isPreviewMode = true
-            const formData = this.$parent.getFormData()
+            const data = this.prepareDate()
 
-            this.commentStore.listComments.data.unshift({
-                'files': [],
+            this.commentStore.listComments.data.unshift(data)
+
+            this.$emit('enable-preview')
+            window.scrollTo(0, 0);
+        },
+        prepareDate() {
+            const formData = this.$parent.getFormData(true)
+            let avatar = JSON.parse(formData.get('avatar'))
+            avatar = avatar?.length ? avatar[0] : null
+
+            return {
+                'preview': true,
+                'files': JSON.parse(formData.getAll('files[]')),
                 'date': new Date(),
                 'message': formData.get('message'),
                 'user': {
-                    'avatar': null,
+                    'avatar': avatar,
                     'email': formData.get('email'),
                     'name': formData.get('name'),
                     'url': formData.get('url'),
                 }
-            })
-
-            this.$emit('enable-preview')
-            window.scrollTo(0, 0);
+            }
         },
         disablePreview() {
             this.isPreviewMode = false
@@ -52,7 +60,7 @@ export default defineComponent({
     <button
         v-if="isPreviewMode"
         type="button"
-        class="btn btn-outline-secondary mt-3"
+        class="btn btn-outline-dark mt-3"
         @click="disablePreview"
     >
         Disable comment preview

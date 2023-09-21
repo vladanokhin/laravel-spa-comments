@@ -34,7 +34,11 @@ export default defineComponent({
             </span>
         </div>
         <div class="d-flex border rounded-bottom p-2">
-            <span class="text-truncate">{{ commentStore.replyToComment.message }}</span>
+            <span
+                v-html="commentStore.replyToComment.message"
+                class="text-truncate"
+            >
+            </span>
         </div>
         <input type="hidden" name="reply" :value="commentStore.replyToComment.id"/>
     </div>
