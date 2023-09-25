@@ -1,4 +1,4 @@
 import './bootstrap';
-import 'lightbox2/dist/js/lightbox-plus-jquery'
+import '/node_modules/lightbox2/dist/js/lightbox-plus-jquery'
 import './src/main'
 

@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
     <link rel="icon" href="/images/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    @vite(['./resources/scss/app.scss', './resources/js/app.js'])
 </head>
 
 <body>
     <div id="app"></div>
 </body>
-
-<script src="{{ mix('js/app.js') }}" defer></script>
 
 </html>
