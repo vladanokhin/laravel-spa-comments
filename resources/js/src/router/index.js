@@ -9,7 +9,7 @@ const router = createRouter({
         {
             path: '/:pathMatch(.*)*',
             name: 'notFound.show',
-            component: () => import('@src/views/NotFound'),
+            component: () => import('@src/views/NotFound.vue'),
             meta: { title : 'Not Found' }
         },
         ...commentsRoute,

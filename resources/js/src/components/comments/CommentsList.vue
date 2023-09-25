@@ -3,8 +3,8 @@ import {defineComponent} from 'vue'
 import moment from "moment";
 import {useCommentsStore} from "@src/store/comments";
 import {Bootstrap5Pagination} from "laravel-vue-pagination";
-import CommentFiles from "@src/components/comments/CommentFiles";
-import BootstrapModal from "@src/components/shared/BootstrapModal";
+import CommentFiles from "@src/components/comments/CommentFiles.vue";
+import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
 
 export default defineComponent({
     name: "CommentsList",

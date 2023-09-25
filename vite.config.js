@@ -15,6 +15,7 @@ export default defineConfig({
             '@src': path.resolve('./resources/js/src'),
             '@fonts': path.resolve('./resources/fonts'),
             '@images': path.resolve('./resources/images'),
+            '~': path.resolve('./node_modules'),
         },
     },
     // For development

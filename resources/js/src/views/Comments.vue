@@ -1,10 +1,10 @@
 <script>
 import {defineComponent} from 'vue'
-import Header from '@src/components/comments/Header'
-import NewCommentForm from '@src/components/comments/new/CommentForm'
-import CommentsList from "@src/components/comments/CommentsList";
+import Header from '@src/components/comments/Header.vue'
+import NewCommentForm from '@src/components/comments/new/CommentForm.vue'
+import CommentsList from "@src/components/comments/CommentsList.vue";
 import {useCommentsStore} from "@src/store/comments.js";
-import BootstrapModal from "@src/components/shared/BootstrapModal";
+import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
 
 export default defineComponent({
     name: "Comments",

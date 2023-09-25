@@ -4,11 +4,11 @@ import captcha from "@src/mixins/captcha";
 import {useVuelidate} from '@vuelidate/core'
 import {useCommentsStore}  from "@src/store/comments";
 import commentFormRules from "@src/validators/commentFormRules";
-import ReplyBlock from "@src/components/comments/new/ReplyBlock";
-import DropFiles from "@src/components/shared/DropFiles";
-import UserImage from "@src/components/shared/UserImage";
+import ReplyBlock from "@src/components/comments/new/ReplyBlock.vue";
+import DropFiles from "@src/components/shared/DropFiles.vue";
+import UserImage from "@src/components/shared/UserImage.vue";
 import { QuillEditor } from '@vueup/vue-quill'
-import PreviewMode from "@src/components/comments/new/PreviewMode";
+import PreviewMode from "@src/components/comments/new/PreviewMode.vue";
 
 export default defineComponent({
     name: "CommentForm",
