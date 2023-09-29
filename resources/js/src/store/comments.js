@@ -7,7 +7,9 @@ export const useCommentsStore = defineStore('comments', {
         replyToComment: {},
         lastOpenedFile: {},
     }),
-    getters: {},
+    getters: {
+        isCommentToReply: (state) => Object.keys(state.replyToComment).length > 0
+    },
     actions: {
         /**
          * Create new comment

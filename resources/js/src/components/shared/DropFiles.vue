@@ -11,6 +11,9 @@ import {useCommentsStore} from "@src/store/comments";
 export default defineComponent({
     name: "DropFiles",
     expose: ['files', 'addServerMessageErrors', 'v$'],
+    props: {
+        isPreviewMode: Boolean,
+    },
     mixins: [tooltip, uploadFiles],
     setup() {
         const serverMessageErrors = ref({})

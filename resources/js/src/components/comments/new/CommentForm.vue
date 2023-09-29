@@ -13,7 +13,7 @@ import PreviewMode from "@src/components/comments/new/PreviewMode.vue";
 export default defineComponent({
     name: "CommentForm",
     mixins: [captcha],
-    emits: ['create-new-comment'],
+    emits: ['create-new-comment', 'changed-preview-mode'],
     setup() {
         const serverMessageErrors = ref({})
 
@@ -87,6 +87,10 @@ export default defineComponent({
             this.$refs.uploadFiles.addServerMessageErrors(errors)
             this.$refs.uploadImage.addServerMessageErrors(errors)
         },
+        setIsPreviewMode(isPreviewMode) {
+            this.isPreviewMode = isPreviewMode
+            this.$emit('changed-preview-mode', this.isPreviewMode)
+        }
     },
     watch: {
         editorMessage() {
@@ -109,7 +113,9 @@ export default defineComponent({
 <template>
     <div class="new-comment-form bg-light shadow rounded-3 p-3">
         <form @submit.prevent="createEmitNewComment" id="js-new-comment-form">
-            <ReplyBlock/>
+            <ReplyBlock
+                :is-preview-mode="isPreviewMode"
+            />
             <div class="d-flex flex-column align-items-center me-2">
                 <UserImage ref="uploadImage"/>
             </div>
@@ -197,7 +203,9 @@ export default defineComponent({
                 </div>
             </div>
             <div class="mb-3">
-                <DropFiles ref="uploadFiles"/>
+                <DropFiles
+                    ref="uploadFiles"
+                />
                 <div class="d-flex justify-content-between">
                     <button
                         type="submit"
@@ -207,8 +215,7 @@ export default defineComponent({
                         Add a comment
                     </button>
                     <PreviewMode
-                        @enable-preview="isPreviewMode = true"
-                        @disable-preview="isPreviewMode = false"
+                        @changed-preview-mode="setIsPreviewMode"
                     />
                 </div>
             </div>

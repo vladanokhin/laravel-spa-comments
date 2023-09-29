@@ -1,9 +1,11 @@
 <script>
 import {defineComponent} from 'vue'
 import {useCommentsStore} from "@src/store/comments";
+import {deepSearch} from "@src/helpers/functions";
 
 export default defineComponent({
     name: "PreviewMode",
+    emits: ['changed-preview-mode'],
     setup() {
         return {
             commentStore: useCommentsStore(),
@@ -12,6 +14,7 @@ export default defineComponent({
     data() {
         return {
             isPreviewMode: false,
+            replyToComment: null,
         }
     },
     methods: {
@@ -22,10 +25,20 @@ export default defineComponent({
             this.isPreviewMode = true
             const data = this.prepareDate()
 
-            this.commentStore.listComments.data.unshift(data)
+            if(this.commentStore.isCommentToReply) {
+                this.replyToComment = deepSearch(this.commentStore.listComments.data, this.commentStore.replyToComment.id)
+                this.replyToComment.children.unshift(data)
+            }
+            else {
+                this.commentStore.listComments.data.unshift(data)
+            }
 
-            this.$emit('enable-preview')
-            window.scrollTo(0, 0);
+            this.$emit('changed-preview-mode', true)
+
+            setTimeout(() => {
+                document.getElementById('js-preview-comment')
+                    .scrollIntoView({behavior: "smooth"})
+            }, 0)
         },
         prepareDate() {
             const formData = this.$parent.getFormData(true)
@@ -47,11 +60,14 @@ export default defineComponent({
         },
         disablePreview() {
             this.isPreviewMode = false
-            this.commentStore.listComments.data.shift()
+            if(this.commentStore.isCommentToReply)
+                this.replyToComment.children.shift()
+            else
+                this.commentStore.listComments.data.shift()
 
-            this.$emit('disable-preview')
+            this.$emit('changed-preview-mode', false)
             window.scrollTo(0, 0);
-        }
+        },
     },
 })
 </script>

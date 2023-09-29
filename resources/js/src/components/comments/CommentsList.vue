@@ -9,8 +9,9 @@ import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
 export default defineComponent({
     name: "CommentsList",
     props: {
-        'comments': Object,
-        'isChild': false,
+        comments: Object,
+        isChild: Boolean,
+        isPreviewMode: Boolean,
     },
     emits: ['open-file'],
     setup() {
@@ -34,7 +35,8 @@ export default defineComponent({
             return moment(_date, ).format('YY-MM-DD в HH:mm')
         },
         setCommentToReply(comment) {
-            this.commentStore.replyToComment = comment
+            if(!this.isPreviewMode)
+                this.commentStore.replyToComment = comment
         },
         paginationChangePage(page) {
             this.commentStore.loadListComments(page)
@@ -64,6 +66,7 @@ export default defineComponent({
             v-for="comment in listComments"
             :key="comment.id"
             :class="{'is-preview': comment.preview ?? false}"
+            :id="comment.preview ? 'js-preview-comment' : `comment-${comment.id}`"
         >
             <div class="row comment-header bg-body-secondary m-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
@@ -116,6 +119,7 @@ export default defineComponent({
                 <CommentsList
                     :comments="comment.children"
                     :is-child="true"
+                    :is-preview-mode="isPreviewMode"
                     @open-file="emitOpenFile"
                 />
             </div>

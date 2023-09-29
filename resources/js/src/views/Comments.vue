@@ -16,6 +16,7 @@ export default defineComponent({
     data() {
         return {
             lastComment: {},
+            isPreviewMode: false,
         }
     },
     methods: {
@@ -54,6 +55,7 @@ export default defineComponent({
                 <div class="bg-light shadow rounded-3 p-3 mb-3">
                     <CommentsList
                         :key="lastComment.id"
+                        :is-preview-mode="isPreviewMode"
                         @open-file="openFile"
                     />
                 </div>
@@ -61,6 +63,7 @@ export default defineComponent({
             <div class="col-4 col-sm-7 col-md-4">
                 <NewCommentForm
                     @create-new-comment="addComment"
+                    @changed-preview-mode="(mode) => isPreviewMode = mode"
                     :key="lastComment.id"
                     ref="commentForm"
                 />

@@ -4,6 +4,9 @@ import {useCommentsStore} from "@src/store/comments";
 
 export default defineComponent({
     name: "ReplyBlock",
+    props: {
+        isPreviewMode: Boolean,
+    },
     setup() {
         return {
             commentStore: useCommentsStore(),
@@ -11,7 +14,8 @@ export default defineComponent({
     },
     methods: {
         removeReplyComment() {
-            this.commentStore.replyToComment = {}
+            if(!this.isPreviewMode)
+                this.commentStore.replyToComment = {}
         }
     }
 
@@ -19,7 +23,10 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="mb-3" v-if="commentStore.replyToComment.id">
+    <div
+        class="mb-3"
+        v-if="this.commentStore.isCommentToReply"
+    >
         <div class="d-flex align-items-center border rounded-top">
             <div class="flex-grow-1">
                 <span class="ps-2">Reply to: </span>
