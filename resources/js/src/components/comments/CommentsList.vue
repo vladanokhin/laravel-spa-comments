@@ -5,6 +5,7 @@ import {useCommentsStore} from "@src/store/comments";
 import {Bootstrap5Pagination} from "laravel-vue-pagination";
 import CommentFiles from "@src/components/comments/CommentFiles.vue";
 import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
+import {scrollToElement} from "@src/helpers/functions.js";
 
 export default defineComponent({
     name: "CommentsList",
@@ -13,7 +14,7 @@ export default defineComponent({
         isChild: Boolean,
         isPreviewMode: Boolean,
     },
-    emits: ['open-file'],
+    emits: ['open-file', 'new-comment-in-list'],
     setup() {
         return {
             commentStore: useCommentsStore(),
@@ -48,6 +49,17 @@ export default defineComponent({
         },
         emitOpenFile(fileId) {
             this.$emit('open-file', fileId)
+        }
+    },
+    watch: {
+        listComments: {
+            handler(newList) {
+                if(Object.keys(newList).length === 0)
+                    return
+
+                this.$emit('new-comment-in-list')
+            },
+            deep: true,
         }
     },
     components: {

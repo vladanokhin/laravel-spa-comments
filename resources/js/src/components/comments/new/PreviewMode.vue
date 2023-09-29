@@ -1,7 +1,7 @@
 <script>
 import {defineComponent} from 'vue'
 import {useCommentsStore} from "@src/store/comments";
-import {deepSearch} from "@src/helpers/functions";
+import {deepSearch, scrollToElement} from "@src/helpers/functions";
 
 export default defineComponent({
     name: "PreviewMode",
@@ -26,6 +26,7 @@ export default defineComponent({
             const data = this.prepareDate()
 
             if(this.commentStore.isCommentToReply) {
+                // console.log('comment', comment)
                 this.replyToComment = deepSearch(this.commentStore.listComments.data, this.commentStore.replyToComment.id)
                 this.replyToComment.children.unshift(data)
             }
@@ -34,11 +35,7 @@ export default defineComponent({
             }
 
             this.$emit('changed-preview-mode', true)
-
-            setTimeout(() => {
-                document.getElementById('js-preview-comment')
-                    .scrollIntoView({behavior: "smooth"})
-            }, 0)
+            scrollToElement('js-preview-comment')
         },
         prepareDate() {
             const formData = this.$parent.getFormData(true)

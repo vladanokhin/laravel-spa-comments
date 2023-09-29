@@ -5,6 +5,7 @@ import NewCommentForm from '@src/components/comments/new/CommentForm.vue'
 import CommentsList from "@src/components/comments/CommentsList.vue";
 import {useCommentsStore} from "@src/store/comments.js";
 import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
+import {scrollToElement} from "@src/helpers/functions.js";
 
 export default defineComponent({
     name: "Comments",
@@ -36,6 +37,9 @@ export default defineComponent({
                 .then((file) => {
                     this.$refs.bootstrapModal.show(file.name, file.content);
                 })
+        },
+        scrollToNewComment() {
+            scrollToElement(`comment-${this.lastComment.id}`)
         }
     },
     components: {
@@ -57,6 +61,7 @@ export default defineComponent({
                         :key="lastComment.id"
                         :is-preview-mode="isPreviewMode"
                         @open-file="openFile"
+                        @new-comment-in-list="scrollToNewComment"
                     />
                 </div>
             </div>
