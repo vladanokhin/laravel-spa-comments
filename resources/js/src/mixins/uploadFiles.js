@@ -31,13 +31,11 @@ export default {
             this.uploadToServer(
                 event.dataTransfer.files,
                 event.currentTarget.getAttribute('data-key-name')
-            ).then((response) => {
-                this.filesId = response.data.data
-            }).finally(() => this.isStartUploading = false)
+            )
         },
         uploadToServer(files, keyName) {
             if(this.hasErrorValidations())
-                return new Promise((resolve, reject) => reject())
+                return;
 
             this.isStartUploading = true
 
@@ -47,6 +45,11 @@ export default {
             })
 
             return this.commentStore.uploadFiles(this.urlUpload, formData)
+                .then((response) => {
+                    this.filesId = response.data.data
+                }).catch((error) => {
+                    this.addServerMessageErrors(error.response.data.errors)
+                }).finally(() => this.isStartUploading = false)
         },
         hasErrorValidations() {
             this.v$.$validate()

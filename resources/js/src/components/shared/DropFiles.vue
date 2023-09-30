@@ -1,7 +1,7 @@
 <script>
 import {defineComponent} from 'vue'
 import commentFilesRules from "@src/validators/commentFilesRules";
-import {ref, watch} from "vue";
+import {ref} from "vue";
 import {useVuelidate} from "@vuelidate/core";
 import tooltip from "@src/mixins/tooltip";
 import uploadFiles from "@src/mixins/uploadFiles";
@@ -37,13 +37,10 @@ export default defineComponent({
              * the user deletes files that have not passed front-end validation
              */
             handler() {
-                if(this.v$.$error || this.files.length === 0 || this.isStartUploading)
+                if(this.v$.$error || this.files.length === 0 || this.isStartUploading || this.filesId.length > 0)
                     return
 
-                this.uploadToServer(this.$refs.upload.files, 'files[]')
-                    .then((response) => {
-                        this.filesId = response.data.data
-                    })
+                this.uploadToServer(this.files, 'files[]')
             },
             deep: true,
         },
