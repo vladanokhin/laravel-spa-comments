@@ -50,9 +50,18 @@ export default defineComponent({
             if(this.isPreviewMode)
                 return
 
-            this.clearServerErrorsByFileName(index)
-            this.files.splice(index, 1)
-            this.filesId.splice(index, 1)
+            const uploadedFile = this.filesId[index]
+
+            if(uploadedFile) {
+                this.deleteFileOnServer(uploadedFile.id, 'delete/')
+                    .then(() => {
+                        this.files.splice(index, 1)
+                        this.filesId.splice(index, 1)
+                    })
+            } else {
+                this.clearServerErrorsByFileName(index)
+                this.files.splice(index, 1)
+            }
         },
         clearServerErrorsByFileName(index) {
             const fileName = this.files[index].name.toLowerCase()

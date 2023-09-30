@@ -59,5 +59,8 @@ export default {
             if(this.isPreviewMode)
                 event.preventDefault()
         },
+        deleteFileOnServer(fileId, url) {
+            return this.commentStore.deleteFileOnServer(fileId, url)
+        }
     },
 }

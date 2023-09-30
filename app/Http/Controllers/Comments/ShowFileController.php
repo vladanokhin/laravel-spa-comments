@@ -7,7 +7,7 @@ use App\Http\Resources\FileResource;
 use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 
-class FileController extends Controller
+class ShowFileController extends Controller
 {
     public function __invoke(File $file)
     {

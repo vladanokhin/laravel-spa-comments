@@ -57,8 +57,18 @@ export default defineComponent({
             if(this.isPreviewMode)
                 return
 
-            this.files.splice(index, 1)
-            this.serverMessageErrors = {}
+            const uploadedFile = this.filesId[index]
+
+            if(uploadedFile) {
+                this.deleteFileOnServer(uploadedFile.id, 'delete/avatar')
+                    .then(() => {
+                        this.files = []
+                        this.filesId = []
+                    })
+            } else {
+                this.serverMessageErrors = {}
+                this.files = []
+            }
         },
         createPreviewImageUrl() {
             // Create a preview of the uploaded image

@@ -65,7 +65,6 @@ export const useCommentsStore = defineStore('comments', {
             })
         },
 
-
         filterByUserField(field, asc = true) {
             const sorted = this.listComments['data']
                                 .sort((a, b) => a.user[field].localeCompare(b.user[field]))
@@ -79,5 +78,9 @@ export const useCommentsStore = defineStore('comments', {
 
             this.listComments['data'] = asc ? sorted : sorted.reverse()
         },
+
+        deleteFileOnServer(fileId, url) {
+            return axios.post(`api/comments/files/${url}/${fileId}`)
+        }
     }
 })
