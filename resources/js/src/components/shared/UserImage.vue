@@ -8,7 +8,10 @@ import {useCommentsStore} from "@src/store/comments";
 export default defineComponent({
     name: "UserImage",
     mixins: [uploadFiles],
-    expose: ['files', 'addServerMessageErrors', 'v$'],
+    expose: ['files', 'addServerMessageErrors', 'v$', 'filesId'],
+    props: {
+        isPreviewMode: Boolean
+    },
     setup() {
         const serverMessageErrors = ref({})
 
@@ -23,15 +26,20 @@ export default defineComponent({
             imagePreviewUrl: null,
             hover: false,
             urlUpload: 'api/comments/files/upload/avatar',
+            filesId: [],
         }
     },
     watch: {
         files: {
             handler() {
-                if(!this.files[0])
+                const image = this.files[0]
+                if(!image)
                     return
 
-                this.imagePreviewUrl = this.files[0].url
+                if(image instanceof File)
+                    this.createPreviewImageUrl()
+                else
+                    this.imagePreviewUrl = this.files[0].url
             },
             deep: true
         },
@@ -46,9 +54,22 @@ export default defineComponent({
             Object.assign(this.serverMessageErrors, {'files': errorsMessage})
         },
         deleteFile(index) {
+            if(this.isPreviewMode)
+                return
+
             this.files.splice(index, 1)
             this.serverMessageErrors = {}
         },
+        createPreviewImageUrl() {
+            // Create a preview of the uploaded image
+            const reader = new FileReader()
+            reader.onload = (event) => {
+                this.imagePreviewUrl = event.target.result
+            }
+
+            reader.readAsDataURL(this.files[0])
+            this.imagePreviewUrl = this.files[0].url
+        }
     },
     validations() {
         return userAvatarRules
@@ -67,6 +88,7 @@ export default defineComponent({
             class="hidden-input"
             :class="{'is-invalid': v$.files.$errors.length}"
             @change="onChange"
+            ref="upload"
             accept="image/jpeg,image/png,image/gif"
         />
         <div
@@ -93,7 +115,11 @@ export default defineComponent({
             class="upload-text"
             data-key-name="avatar"
         >
-            <label for="avatar" class="file-label">
+            <label
+                for="avatar"
+                class="file-label"
+                @click="clickToUploadFile"
+            >
                 <span>Upload image</span>
             </label>
 

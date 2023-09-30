@@ -51,7 +51,7 @@ export default defineComponent({
         },
         getFormData(fullFilesData = false) {
             const formData = new FormData(document.getElementById('js-new-comment-form'))
-            let files = [...this.$refs.uploadFiles.files]
+            let files = [...this.$refs.uploadFiles.filesId]
 
             if(fullFilesData) {
                 formData.append('files[]', JSON.stringify(files))
@@ -65,7 +65,7 @@ export default defineComponent({
             if(this.$refs.uploadImage.files.length) {
                 formData.append(
                     'avatar',
-                    fullFilesData ? JSON.stringify(this.$refs.uploadImage.files) : this.$refs.uploadImage.files[0].id
+                    fullFilesData ? JSON.stringify(this.$refs.uploadImage.filesId) : this.$refs.uploadImage.filesId[0].id
                 )
 
             }
@@ -117,7 +117,10 @@ export default defineComponent({
                 :is-preview-mode="isPreviewMode"
             />
             <div class="d-flex flex-column align-items-center me-2">
-                <UserImage ref="uploadImage"/>
+                <UserImage
+                    ref="uploadImage"
+                    :is-preview-mode="isPreviewMode"
+                />
             </div>
             <div class="mb-3">
                 <label for="name" class="form-label">User name</label>
@@ -205,6 +208,7 @@ export default defineComponent({
             <div class="mb-3">
                 <DropFiles
                     ref="uploadFiles"
+                    :is-preview-mode="isPreviewMode"
                 />
                 <div class="d-flex justify-content-between">
                     <button

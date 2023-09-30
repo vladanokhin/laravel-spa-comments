@@ -1,16 +1,15 @@
 <script>
 import {defineComponent} from 'vue'
 import commentFilesRules from "@src/validators/commentFilesRules";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {useVuelidate} from "@vuelidate/core";
 import tooltip from "@src/mixins/tooltip";
 import uploadFiles from "@src/mixins/uploadFiles";
-import {isEmpty} from "lodash";
 import {useCommentsStore} from "@src/store/comments";
 
 export default defineComponent({
     name: "DropFiles",
-    expose: ['files', 'addServerMessageErrors', 'v$'],
+    expose: ['files', 'addServerMessageErrors', 'v$', 'filesId'],
     props: {
         isPreviewMode: Boolean,
     },
@@ -27,22 +26,46 @@ export default defineComponent({
     data() {
         return {
             isDragging: false,
-            files: [],
             urlUpload: 'api/comments/files/upload/',
+            filesId: [],
         }
+    },
+    watch: {
+        files: {
+            /**
+             * This watcher starts uploading files when
+             * the user deletes files that have not passed front-end validation
+             */
+            handler() {
+                if(this.v$.$error || this.files.length === 0 || this.isStartUploading)
+                    return
+
+                this.uploadToServer(this.$refs.upload.files, 'files[]')
+                    .then((response) => {
+                        this.filesId = response.data.data
+                    })
+            },
+            deep: true,
+        },
     },
     methods: {
         deleteFile(index) {
-            this.clearServerErrorsByFileName(index)
-            this.files.splice(index, 1)
-        },
-        clearServerErrorsByFileName(index) {
-            if(!this.v$.$error && isEmpty(this.serverMessageErrors))
+            if(this.isPreviewMode)
                 return
 
+            this.clearServerErrorsByFileName(index)
+            this.files.splice(index, 1)
+            this.filesId.splice(index, 1)
+        },
+        clearServerErrorsByFileName(index) {
             const fileName = this.files[index].name.toLowerCase()
-            this.serverMessageErrors['files'] = this.serverMessageErrors['files']
+            const filteredErrors = this.serverMessageErrors['files']
                 ?.filter( (msg) => !msg.toLowerCase().includes(`"${fileName}"`) )
+
+            if(!this.hasErrorValidations() || !filteredErrors)
+                return
+
+            this.serverMessageErrors['files'] = filteredErrors
         },
         addServerMessageErrors(errors) {
             // Get errors only for files
@@ -76,6 +99,8 @@ export default defineComponent({
             multiple
             id="user-file"
             class="hidden-input"
+            @change="onUpload"
+            ref="upload"
             :class="{'is-invalid': v$.files.$errors.length}"
             accept="text/plain"
         />
@@ -88,9 +113,22 @@ export default defineComponent({
             v-if="files.length === 0"
             data-key-name="files[]"
         >
-            <label for="user-file" class="file-label">
-                <span v-if="isDragging">Release to drop files here.</span>
-                <span v-else>Drop files here or <u>click here</u> to upload.</span>
+            <label
+                @click="clickToUploadFile"
+                for="user-file"
+                class="file-label"
+                ref="uploadLabel"
+            >
+                <span
+                    v-if="isDragging"
+                >
+                    Release to drop files here.
+                </span>
+                <span
+                    v-else
+                >
+                    Drop files here or <u>click here</u> to upload.
+                </span>
             </label>
         </div>
         <div

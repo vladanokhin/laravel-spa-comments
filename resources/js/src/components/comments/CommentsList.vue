@@ -5,7 +5,6 @@ import {useCommentsStore} from "@src/store/comments";
 import {Bootstrap5Pagination} from "laravel-vue-pagination";
 import CommentFiles from "@src/components/comments/CommentFiles.vue";
 import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
-import {scrollToElement} from "@src/helpers/functions.js";
 
 export default defineComponent({
     name: "CommentsList",
@@ -36,8 +35,11 @@ export default defineComponent({
             return moment(_date, ).format('YY-MM-DD в HH:mm')
         },
         setCommentToReply(comment) {
-            if(!this.isPreviewMode)
-                this.commentStore.replyToComment = comment
+            if(this.isPreviewMode)
+                return
+
+            this.commentStore.replyToComment = comment
+            window.scrollTo(0, 0)
         },
         paginationChangePage(page) {
             this.commentStore.loadListComments(page)

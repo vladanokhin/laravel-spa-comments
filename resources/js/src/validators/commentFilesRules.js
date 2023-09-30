@@ -12,7 +12,7 @@ const commentFormRules = {
             `Only the following file types are allowed: ${allowedMimeTypes.toString()}`,
             mimes(allowedMimeTypes)
         ),
-        fileSize:helpers.withMessage(
+        fileSize: helpers.withMessage(
             `File size should not exceed ${maxKb}kb`,
             fileSize(maxKb)
         ),
