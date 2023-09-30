@@ -89,7 +89,7 @@ export default defineComponent({
             <div class="row comment-header bg-body-secondary m-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
                     <div class="user-icon text-overflow">
-                        <PhotoProvider v-if="comment.user.avatar?.url" defaultBackdropOpacity="0.5">
+                        <PhotoProvider v-if="comment.user.avatar?.url" :defaultBackdropOpacity="0.5">
                             <PhotoConsumer :src="comment.user.avatar.url">
                                 <img :src="comment.user.avatar.url" :alt="comment.user.name" class="view-box"/>
                             </PhotoConsumer>
