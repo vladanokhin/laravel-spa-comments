@@ -5,6 +5,8 @@ import {useCommentsStore} from "@src/store/comments";
 import {Bootstrap5Pagination} from "laravel-vue-pagination";
 import CommentFiles from "@src/components/comments/CommentFiles.vue";
 import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
+import 'vue3-photo-preview/dist/index.css';
+import {PhotoConsumer, PhotoProvider} from "vue3-photo-preview";
 
 export default defineComponent({
     name: "CommentsList",
@@ -65,6 +67,8 @@ export default defineComponent({
         }
     },
     components: {
+        PhotoConsumer,
+        PhotoProvider,
         Bootstrap5Pagination,
         CommentFiles,
         BootstrapModal,
@@ -85,17 +89,11 @@ export default defineComponent({
             <div class="row comment-header bg-body-secondary m-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
                     <div class="user-icon text-overflow">
-                        <a
-                            v-if="comment.user.avatar?.url"
-                            :data-lightbox="comment.user.avatar.id"
-                            :data-title="comment.user.name"
-                            :href="comment.user.avatar.url"
-                        >
-                            <img
-                                :src="comment.user.avatar.url"
-                                :alt="comment.user.name"
-                            />
-                        </a>
+                        <PhotoProvider v-if="comment.user.avatar?.url" defaultBackdropOpacity="0.5">
+                            <PhotoConsumer :src="comment.user.avatar.url">
+                                <img :src="comment.user.avatar.url" :alt="comment.user.name" class="view-box"/>
+                            </PhotoConsumer>
+                        </PhotoProvider>
                         <span
                             v-else
                             class="text-uppercase fs-5"
