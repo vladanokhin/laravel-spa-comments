@@ -7,6 +7,7 @@ import CommentFiles from "@src/components/comments/CommentFiles.vue";
 import BootstrapModal from "@src/components/shared/BootstrapModal.vue";
 import 'vue3-photo-preview/dist/index.css';
 import {PhotoConsumer, PhotoProvider} from "vue3-photo-preview";
+import {decodeHtml} from "@src/helpers/functions.js";
 
 export default defineComponent({
     name: "CommentsList",
@@ -53,6 +54,9 @@ export default defineComponent({
         },
         emitOpenFile(fileId) {
             this.$emit('open-file', fileId)
+        },
+        toHtml(html) {
+            return decodeHtml(html)
         }
     },
     watch: {
@@ -119,7 +123,7 @@ export default defineComponent({
             </div>
             <div class="row comment-text m-2">
                 <div class="col-12">
-                    <span v-html="comment.message"></span>
+                    <span v-html="toHtml(comment.message)"></span>
                 </div>
                 <CommentFiles
                     :files="comment.files"

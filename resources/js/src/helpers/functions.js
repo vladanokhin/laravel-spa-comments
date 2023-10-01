@@ -29,7 +29,20 @@ const scrollToElement = (id) => {
     }, 100)
 }
 
+/**
+ * Decode html entities
+ * @param html
+ * @return {string}
+ */
+const decodeHtml = (html) => {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
+
+
 export {
     deepSearch,
     scrollToElement,
+    decodeHtml,
 }

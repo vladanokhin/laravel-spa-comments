@@ -26,7 +26,6 @@ export default defineComponent({
             const data = this.prepareDate()
 
             if(this.commentStore.isCommentToReply) {
-                // console.log('comment', comment)
                 this.replyToComment = deepSearch(this.commentStore.listComments.data, this.commentStore.replyToComment.id)
                 this.replyToComment.children.unshift(data)
             }
