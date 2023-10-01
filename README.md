@@ -1,3 +1,59 @@
+# SPA Comments
+
+**Project Description**
+
+This project is a web-based commenting system that allows users to post comments. It includes various functionalities to ensure data integrity, security and user-friendliness.
+
+**Technology stack:**
+
+- **Backend Laravel version 9.19**
+- **Vue3 frontend**
+- **PostgreSQL Database**
+
+**Key Functions**
+
+1. **Comment Submission:**
+    - Users can leave comments on the platform.
+    - The comment submission form includes the following fields:
+        - User Name (mandatory, alphanumeric characters only)
+        - E-mail (mandatory, email format)
+        - Home Page (optional, URL format)
+        - CAPTCHA (mandatory, alphanumeric characters displayed as an image)
+        - Text (mandatory, plain text message with restricted HTML tags)
+
+2. **Comment Storage:**
+    - All user-entered comments are stored in a relational database.
+    - User data, including customer identification information, is securely stored.
+
+3. **Comment Management:**
+    - Multiple comments can be added for each record in a cascading manner.
+    - Capitalized comments (non-replies) are displayed in a sortable table format with sorting options by User Name, E-mail, and date added (both ascending and descending).
+    - Pagination is implemented, with 25 messages per page.
+    - Default sorting is Last-In-First-Out (LIFO).
+
+4. **Security Features:**
+    - User inputs are validated both on the server and client sides.
+    - HTML tags are restricted to allowed ones and checked for proper closure to ensure valid XHTML.
+
+5. **User Interface:**
+    - Visual effects are added for image and text file viewing.
+
+6. **JavaScript and File Handling:**
+    - Users can add images or text files to their posts.
+    - Images are resized to a maximum size of 320x240 pixels if they exceed this dimension. Supported file formats include JPG, GIF, and PNG.
+    - Text files are limited to 100 KB in size and must be in TXT format.
+    - Viewing of files includes visual effects for enhanced user experience.
+
+7. **Regular Expressions:**
+    - Users are allowed to use specific HTML tags in their messages: a, code, i, strong.
+    - There is validation to ensure proper tag closure and valid XHTML.
+
+8. **JavaScript and AJAX:**
+    - Data input validation occurs on both the server and client sides.
+    - Message preview function is implemented without page reloading.
+    - A panel with buttons for HTML tags ([i], [strong], [code], [a]) is provided.
+    - Visual effects are incorporated for a smoother user experience.
+
 # Installation (production)
 
 ### Create non-root User
