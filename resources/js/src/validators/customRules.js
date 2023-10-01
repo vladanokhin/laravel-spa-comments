@@ -51,4 +51,29 @@ const fileSize = (kb) => (files) => {
     return true
 }
 
-export { mimes, fileSize}
+const htmlTags = (text) => {
+    const allowedTagsRegex = /<(a|code|i|strong)(\s+[a-zA-Z]+="[^"]*")*\s*>[\s\S]*?<\/\1>/;
+    const htmlTagRegex = /<[^>]+>/g;
+    const htmlTags = text.match(htmlTagRegex);
+
+    if(!htmlTags)
+        return true
+
+    if(text.search(/<([^>]+)>[\s\S]*?<\/\1>/g) === -1) {
+        return false
+    }
+
+    for (const tag of htmlTags) {
+        if (tag.search(/<\/?(a|code|i|strong)>/g) === -1) {
+            return false
+        }
+    }
+
+    return allowedTagsRegex.test(text)
+}
+
+export {
+    mimes,
+    fileSize,
+    htmlTags,
+}
