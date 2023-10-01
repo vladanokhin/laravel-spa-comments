@@ -1,4 +1,5 @@
-import { alphaNum, email, maxLength, minLength, required, url } from "@vuelidate/validators";
+import {alphaNum, email, helpers, maxLength, minLength, required, url} from "@vuelidate/validators";
+import {htmlTags} from "@src/validators/customRules.js";
 
 const commentFormRules = {
     name: {
@@ -16,6 +17,7 @@ const commentFormRules = {
         required,
         minLength: minLength(3),
         maxLength: maxLength(250),
+        htmlTags: helpers.withMessage('Invalid html in the text', htmlTags),
         $autoDirty: true,
     },
 }
