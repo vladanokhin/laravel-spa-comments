@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
     <link rel="icon" href="/images/icon.png" type="image/x-icon">
-    @vite(['./resources/scss/app.scss', './resources/js/app.js'])
+    @vite(['resources/js/app.js'])
 </head>
 
 <body>
