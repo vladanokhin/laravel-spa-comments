@@ -47,6 +47,8 @@ export default defineComponent({
     methods: {
         onChange() {
             this.hover = false
+            this.onUpload()
+            this.uploadToServer(this.files, 'avatar')
         },
         addServerMessageErrors(errors) {
             const errorsMessage = errors['avatar']
