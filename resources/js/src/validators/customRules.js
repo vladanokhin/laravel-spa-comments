@@ -52,27 +52,39 @@ const fileSize = (kb) => (files) => {
 }
 
 const htmlTags = (text) => {
-    const allowedTagsRegex = /<(a|code|i|strong)(\s+[a-zA-Z]+="[^"]*")*\s*>[\s\S]*?<\/\1>/g;
-    const htmlTagRegex = /<[^>]+>/g;
-    const htmlTags = text.match(htmlTagRegex);
+    const allowedTags = ['a', 'i', 'code', 'strong'];
+    const allowedTagsRegex = /<(a|code|i|strong)(\s+[a-zA-Z]+="[^"]*")*\s*>[\s\S]*?<\/\1>/g
+    const tagPattern = /<\/?([a-zA-Z0-9]+)(?:[^>]*?)>/g;
+    const unclosedTags = [];
 
-    if(!htmlTags)
-        return true
-
-    // Checking for closing html tags in text
-    if(text.search(/<([^>]+)(\s+[a-zA-Z]+="[^"]*")*\s*>[\s\S]*?<\/\1>/g) === -1) {
-        return false
-    }
-
-    // Checking each tag to see if it is one of the available ones
-    for (const tag of htmlTags) {
-        if (tag.search(/<\/?(a|code|i|strong)(\s+[a-zA-Z]+="[^"]*")*\s*>/g) === -1) {
+    const result = text.replace(tagPattern, (match, tagName) => {
+        const lowerTagName = tagName.toLowerCase();
+        if (!allowedTags.includes(lowerTagName)) {
             return false
         }
-    }
 
-    // Check all text for correct tags
-    return allowedTagsRegex.test(text)
+        if (match.startsWith("</")) {
+            if (unclosedTags.length === 0) {
+                unclosedTags.push(lowerTagName);
+            } else {
+                const lastUnclosed = unclosedTags.pop();
+                if (lastUnclosed !== lowerTagName) {
+                    return false
+                }
+            }
+        } else {
+            unclosedTags.push(lowerTagName);
+        }
+
+        return true;
+    });
+
+    return unclosedTags.length > 0 ? false : result && allowedTagsRegex.test(text)
+}
+
+function valid(html) {
+
+
 }
 
 export {
