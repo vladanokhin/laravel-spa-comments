@@ -17,7 +17,10 @@ const commentFormRules = {
         required,
         minLength: minLength(3),
         maxLength: maxLength(250),
-        htmlTags: helpers.withMessage('Invalid html in the text', htmlTags),
+        htmlTags: helpers.withMessage(
+            'Invalid html in the text',
+            htmlTags(['a', 'i', 'code', 'strong'])
+        ),
         $autoDirty: true,
     },
 }

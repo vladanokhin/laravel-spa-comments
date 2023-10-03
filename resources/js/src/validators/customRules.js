@@ -51,40 +51,44 @@ const fileSize = (kb) => (files) => {
     return true
 }
 
-const htmlTags = (text) => {
-    const allowedTags = ['a', 'i', 'code', 'strong'];
-    const allowedTagsRegex = /<(a|code|i|strong)(\s+[a-zA-Z]+="[^"]*")*\s*>[\s\S]*?<\/\1>/g
-    const tagPattern = /<\/?([a-zA-Z0-9]+)(?:[^>]*?)>/g;
-    const unclosedTags = [];
+/**
+ * Checking html tags and their validity
+ * @param allowedTags
+ * @return {(function(*): boolean)|*}
+ */
+const htmlTags = (allowedTags) => (text) => {
+    const tagPattern = /<\/?([a-zA-Z0-9]+)(?:(?:\s+[a-zA-Z]+="[^"]*")*\s*|\s*)>/g
+    const unclosedTags = []
+    const matches = text.match(tagPattern);
 
-    const result = text.replace(tagPattern, (match, tagName) => {
-        const lowerTagName = tagName.toLowerCase();
-        if (!allowedTags.includes(lowerTagName)) {
-            return false
-        }
+    if (!matches || !helpers.req(text))
+        return true
 
-        if (match.startsWith("</")) {
-            if (unclosedTags.length === 0) {
-                unclosedTags.push(lowerTagName);
-            } else {
-                const lastUnclosed = unclosedTags.pop();
-                if (lastUnclosed !== lowerTagName) {
-                    return false
-                }
+    for (const match of matches) {
+        const tagNameMatch = match.match(/<\/?([a-zA-Z0-9]+)/);
+
+        if (tagNameMatch) {
+            const lowerTagName = tagNameMatch[1].toLowerCase();
+            if (!allowedTags.includes(lowerTagName)) {
+                return false
             }
-        } else {
-            unclosedTags.push(lowerTagName);
+
+            if (match.startsWith("</")) {
+                if (unclosedTags.length === 0) {
+                    unclosedTags.push(lowerTagName)
+                } else {
+                    const lastUnclosed = unclosedTags.pop()
+                    if (lastUnclosed !== lowerTagName) {
+                        return false
+                    }
+                }
+            } else {
+                unclosedTags.push(lowerTagName)
+            }
         }
+    }
 
-        return true;
-    });
-
-    return unclosedTags.length > 0 ? false : result && allowedTagsRegex.test(text)
-}
-
-function valid(html) {
-
-
+    return unclosedTags.length === 0
 }
 
 export {
