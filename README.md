@@ -9,6 +9,7 @@ This project is a web-based commenting system that allows users to post comments
 - **Backend Laravel version 9.19**
 - **Vue3 frontend**
 - **PostgreSQL Database**
+- **Storage: s3 bucket**
 
 **Key Functions**
 
